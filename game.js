@@ -458,7 +458,7 @@ for (let botIndex = bots.length - 1; botIndex >= 0; botIndex--) {
         60 + bot.blades * 2;
 
     const playerSword =
-        getSwordLevel(player.blades);
+        getSwordLevel(getTotalBladePower());
 
     const botSword =
         getSwordLevel(bot.blades);
@@ -470,7 +470,7 @@ for (let botIndex = bots.length - 1; botIndex >= 0; botIndex--) {
 
         const playerAngle =
             player.angle +
-            (i * Math.PI * 2 / player.blades);
+            (i * Math.PI * 2 / getTotalBladePower());
 
         const px =
             player.x +
@@ -528,8 +528,8 @@ for (let botIndex = bots.length - 1; botIndex >= 0; botIndex--) {
                     botSword.level
                 ) {
 
-                    player.blades =
-                        Math.max(1, player.blades - 1);
+                    getTotalBladePower() =
+                        Math.max(1, getTotalBladePower() - 1);
 
                     bot.blades =
                         Math.max(1, bot.blades - 1);
@@ -548,8 +548,8 @@ for (let botIndex = bots.length - 1; botIndex >= 0; botIndex--) {
                 // BOT STRONGER
                 else {
 
-                    player.blades =
-                        Math.max(1, player.blades - 1);
+                    getTotalBladePower() =
+                        Math.max(1, getTotalBladePower() - 1);
                 }
 
                 break;
@@ -576,7 +576,7 @@ for (let botIndex = bots.length - 1; botIndex >= 0; botIndex--) {
     }
 
     // Game over
-    if (player.blades <= 0) {
+    if (getTotalBladePower() <= 0) {
 
         alert("GAME OVER");
 
@@ -598,7 +598,7 @@ for (let botIndex = bots.length - 1; botIndex >= 0; botIndex--) {
 
         const bladeAngle =
             player.angle +
-            (i * Math.PI * 2 / player.blades);
+            (i * Math.PI * 2 / getTotalBladePower());
 
         const bx =
             player.x +
@@ -619,7 +619,7 @@ for (let botIndex = bots.length - 1; botIndex >= 0; botIndex--) {
             // Stronger player wins
             if (getTotalBladePower() >= bot.blades) {
 
-                player.blades += bot.blades;
+                getTotalBladePower() += bot.blades;
 
                 createHitSparks(
                     bot.x,
@@ -687,7 +687,7 @@ obstacles.forEach((obs, obsIndex) => {
 
         const bladeAngle =
             player.angle +
-            (i * Math.PI * 2) / player.blades;
+            (i * Math.PI * 2) / getTotalBladePower();
 
         const bx =
             player.x +
@@ -901,7 +901,7 @@ function draw() {
         // =========================
 
         // More blades = more zoom out
-        let zoom = 1 - (player.blades * 0.003);
+        let zoom = 1 - (getTotalBladePower() * 0.003);
 
         // Clamp zoom
         zoom = Math.max(0.35, zoom);
