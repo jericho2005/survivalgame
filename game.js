@@ -11,6 +11,20 @@ let trailParticles = [];
 let hitSparks = [];
 let lightningEffects = [];
 
+function getTotalBladePower() {
+
+    let total = 0;
+
+    for (let lvl in player.inventory) {
+
+        total +=
+            player.inventory[lvl] *
+            Number(lvl);
+    }
+
+    return total;
+}
+
 
 const slashSounds = [
 
@@ -97,46 +111,108 @@ function createLightning(x1, y1, x2, y2, color) {
 const worldSize = 3000;
 
 const swordLevels = [
+
     {
         level: 1,
-        color: "#00ffcc",
-        size: 12,
-        damage: 0.1,
-        speed: 0.05
+        color: "#ffffff",
+        size: 10,
+        damage: 1,
+        requirement: 10
     },
 
     {
         level: 2,
-        color: "#00aaff",
-        size: 16,
-        damage: 0.2,
-        speed: 0.07
+        color: "#d8f3ff",
+        size: 12,
+        damage: 2,
+        requirement: 15
     },
 
     {
         level: 3,
-        color: "#aa00ff",
-        size: 20,
-        damage: 0.35,
-        speed: 0.1
+        color: "#9be7ff",
+        size: 14,
+        damage: 4,
+        requirement: 20
     },
 
     {
         level: 4,
-        color: "#ff0033",
-        size: 25,
-        damage: 0.5,
-        speed: 0.14
+        color: "#5ab8ff",
+        size: 16,
+        damage: 7,
+        requirement: 25
     },
 
     {
         level: 5,
-        color: "#ffd700",
-        size: 32,
-        damage: 1,
-        speed: 0.18
+        color: "#2d7dff",
+        size: 18,
+        damage: 11,
+        requirement: 30
+    },
+
+    {
+        level: 6,
+        color: "#4b3dff",
+        size: 21,
+        damage: 16,
+        requirement: 35
+    },
+
+    {
+        level: 7,
+        color: "#3a1b7a",
+        size: 24,
+        damage: 23,
+        requirement: 40
+    },
+
+    {
+        level: 8,
+        color: "#240046",
+        size: 28,
+        damage: 32,
+        requirement: 50
+    },
+
+    {
+        level: 9,
+        color: "#14001f",
+        size: 34,
+        damage: 50,
+        requirement: Infinity
     }
+
 ];
+
+function mergeBlades() {
+
+    for (let lvl = 1; lvl < swordLevels.length; lvl++) {
+
+        const data =
+            swordLevels[lvl - 1];
+
+        const nextLevel = lvl + 1;
+
+        if (
+            player.inventory[lvl] >=
+            data.requirement
+        ) {
+
+            player.inventory[lvl] -=
+                data.requirement;
+
+            if (!player.inventory[nextLevel]) {
+                player.inventory[nextLevel] = 0;
+            }
+
+            player.inventory[nextLevel]++;
+
+            mergeBlades();
+        }
+    }
+}
 
 function getSwordLevel(blades) {
 
@@ -170,7 +246,9 @@ const player = {
     y: 0,
     radius: 40,
     speed: 4,
-    blades: 1,
+    inventory: {
+    1: 1
+    },
     angle: 0
 };
 
@@ -186,7 +264,9 @@ function init() {
 
     player.x = worldSize / 2;
     player.y = worldSize / 2;
-    player.blades = 1;
+    player.inventory = {
+        1: 1
+    };
     player.angle = 0;
 
     bubbles = [];
@@ -573,17 +653,25 @@ for (let botIndex = bots.length - 1; botIndex >= 0; botIndex--) {
     }
 }
 
-    // Bubble collision
-    bubbles.forEach((bubble, index) => {
-        const dist = Math.hypot(player.x - bubble.x, player.y - bubble.y);
+// Bubble collision
+bubbles.forEach((bubble, index) => {
 
-        if (dist < player.radius + bubble.radius) {
-            player.blades += bubble.value;
+    const dist = Math.hypot(
+        player.x - bubble.x,
+        player.y - bubble.y
+    );
 
-            bubbles.splice(index, 1);
-            spawnBubble();
-        }
-    });
+    if (dist < player.radius + bubble.radius) {
+
+        player.inventory[1] += bubble.value;
+
+        mergeBlades();
+
+        bubbles.splice(index, 1);
+
+        spawnBubble();
+    }
+});
 
     // =========================
 // BLADE VS OBSTACLES
@@ -622,7 +710,7 @@ obstacles.forEach((obs, obsIndex) => {
             hitSound.play();
 
             // Minus obstacle number
-            obs.value -= 1;
+            obs.value -= sword.damage;
 
             createHitSparks(
                 bx,
@@ -689,7 +777,7 @@ obstacles.forEach((obs, obsIndex) => {
         }
     });
 
-    scoreEl.innerText = `Blades: ${player.blades}`;
+    scoreEl.innerText = `Power: ${getTotalBladePower()}`;
 
     draw();
 
@@ -1028,40 +1116,49 @@ function drawPlayerCharacter() {
 }
     drawPlayerCharacter();
     
-    // Blades
-    const orbitRadius = 60 + player.blades * 2;
+    // =========================
+// MULTI-RING BLADE SYSTEM
+// =========================
 
-    const playerSword = getSwordLevel(player.blades);
+let ring = 0;
 
-    for (let i = 0; i < player.blades; i++) {
+for (let level = 1; level <= 9; level++) {
+
+    const amount =
+        player.inventory[level] || 0;
+
+    if (amount <= 0) continue;
+
+    const sword =
+        swordLevels[level - 1];
+
+    // Ring distance
+    const orbitRadius =
+        120 + ring * 70;
+
+    for (let i = 0; i < amount; i++) {
 
         const bladeAngle =
-            player.angle + (i * Math.PI * 2) / player.blades;
+            player.angle +
+            (i * Math.PI * 2 / amount);
 
         const bx =
-            player.x + Math.cos(bladeAngle) * orbitRadius;
+            player.x +
+            Math.cos(bladeAngle) * orbitRadius;
 
         const by =
-            player.y + Math.sin(bladeAngle) * orbitRadius;
+            player.y +
+            Math.sin(bladeAngle) * orbitRadius;
 
         drawCrescent(
             bx,
             by,
             bladeAngle + Math.PI / 2,
-            playerSword
+            sword
         );
-
-        if (Math.random() < 0.15) {
-
-            createTrail(
-                bx,
-                by,
-                playerSword.color
-            );
-        }
     }
 
-    ctx.restore();
+    ring++;
 }
 
 // =========================
