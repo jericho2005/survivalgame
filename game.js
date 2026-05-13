@@ -34,7 +34,7 @@
 
         const s = sound.cloneNode();
 
-        s.volume = 0.25;
+        s.volume = 1;
         s.play();
     }
 
