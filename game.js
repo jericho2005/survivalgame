@@ -530,7 +530,36 @@
                         }
                         else {
 
-                            gameOver();
+                            // Remove one weakest blade
+                            if (player.inventory[1] > 0) {
+
+                                player.inventory[1]--;
+                            }
+
+                            // Prevent negative blades
+                            if (player.inventory[1] < 0) {
+                                player.inventory[1] = 0;
+                            }
+
+                            createLightning(
+                                bot.x,
+                                bot.y,
+                                player.x,
+                                player.y,
+                                "#ff0000"
+                            );
+
+                            createHitSparks(
+                                player.x,
+                                player.y,
+                                "#ff0000"
+                            );
+
+                            // Only game over when truly no blades left
+                            if (getTotalBladePower() <= 0) {
+
+                                gameOver();
+                            }
                         }
 
                         break;
