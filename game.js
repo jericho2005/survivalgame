@@ -245,16 +245,18 @@ function drawCrescent(x, y, rotation, swordData) {
     ctx.beginPath();
 
     // Tip
-    ctx.moveTo(28, 0);
+    const bladeLength = swordData.size * 2.5;
+
+    ctx.moveTo(bladeLength, 0);
 
     // Upper edge
-    ctx.lineTo(-12, -4);
+    ctx.lineTo(-bladeLength * 0.4, -4);
 
     // Handle back
-    ctx.lineTo(-20, 0);
+    ctx.lineTo(-bladeLength * 0.7, 0);
 
     // Lower edge
-    ctx.lineTo(-12, 4);
+    ctx.lineTo(-bladeLength * 0.4, 4);
 
     ctx.closePath();
 
