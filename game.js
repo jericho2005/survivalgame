@@ -574,7 +574,7 @@ bots.forEach((bot) => {
             createTrail(
                 bx,
                 by,
-                playerSword.color
+                botSword.color
             );
         }
     }
