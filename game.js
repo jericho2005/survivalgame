@@ -237,26 +237,38 @@ function drawCrescent(x, y, rotation, swordData) {
     ctx.translate(x, y);
     ctx.rotate(rotation);
 
+    // Long thin crescent settings
+    const outerRadius = swordData.size * 2.2;
+    const innerRadius = swordData.size * 1.9;
+
+    // Offset controls thickness
+    const offsetX = swordData.size * 0.9;
+
     // Glow
     ctx.shadowColor = swordData.color;
-    ctx.shadowBlur = 8;
+    ctx.shadowBlur = 6;
 
-    // Blade shape
     ctx.beginPath();
 
-    // Tip
-    const bladeLength = swordData.size * 2.5;
+    // Outer curve
+    ctx.arc(
+        0,
+        0,
+        outerRadius,
+        0.35 * Math.PI,
+        1.65 * Math.PI,
+        false
+    );
 
-    ctx.moveTo(bladeLength, 0);
-
-    // Upper edge
-    ctx.lineTo(-bladeLength * 0.4, -4);
-
-    // Handle back
-    ctx.lineTo(-bladeLength * 0.7, 0);
-
-    // Lower edge
-    ctx.lineTo(-bladeLength * 0.4, 4);
+    // Inner curve
+    ctx.arc(
+        offsetX,
+        0,
+        innerRadius,
+        1.65 * Math.PI,
+        0.35 * Math.PI,
+        true
+    );
 
     ctx.closePath();
 
@@ -264,14 +276,13 @@ function drawCrescent(x, y, rotation, swordData) {
     ctx.fillStyle = swordData.color;
     ctx.fill();
 
-    // Border
+    // Black outline
     ctx.lineWidth = 2;
-    ctx.strokeStyle = "rgba(0,0,0,0.8)";
+    ctx.strokeStyle = "rgba(0,0,0,0.85)";
     ctx.stroke();
 
     ctx.restore();
 }
-
 // =========================
 // UPDATE
 // =========================
