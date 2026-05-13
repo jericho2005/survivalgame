@@ -319,6 +319,135 @@ function update() {
         }
     });
 
+
+    // =========================
+// BLADE VS BLADE COLLISION
+// =========================
+
+for (let botIndex = bots.length - 1; botIndex >= 0; botIndex--) {
+
+    const bot = bots[botIndex];
+
+    const playerOrbit =
+        60 + player.blades * 2;
+
+    const botOrbit =
+        60 + bot.blades * 2;
+
+    const playerSword =
+        getSwordLevel(player.blades);
+
+    const botSword =
+        getSwordLevel(bot.blades);
+
+    let collisionHappened = false;
+
+    // Player blades
+    for (let i = 0; i < player.blades; i++) {
+
+        const playerAngle =
+            player.angle +
+            (i * Math.PI * 2 / player.blades);
+
+        const px =
+            player.x +
+            Math.cos(playerAngle) * playerOrbit;
+
+        const py =
+            player.y +
+            Math.sin(playerAngle) * playerOrbit;
+
+        // Bot blades
+        for (let j = 0; j < bot.blades; j++) {
+
+            const botAngle =
+                bot.angle +
+                (j * Math.PI * 2 / bot.blades);
+
+            const bx =
+                bot.x +
+                Math.cos(botAngle) * botOrbit;
+
+            const by =
+                bot.y +
+                Math.sin(botAngle) * botOrbit;
+
+            const dist =
+                Math.hypot(px - bx, py - by);
+
+            // Blade hit
+            if (dist < 20) {
+
+                collisionHappened = true;
+
+                createHitSparks(
+                    (px + bx) / 2,
+                    (py + by) / 2,
+                    playerSword.color
+                );
+
+                // SAME LEVEL
+                if (
+                    playerSword.level ===
+                    botSword.level
+                ) {
+
+                    player.blades =
+                        Math.max(1, player.blades - 1);
+
+                    bot.blades =
+                        Math.max(1, bot.blades - 1);
+                }
+
+                // PLAYER STRONGER
+                else if (
+                    playerSword.level >
+                    botSword.level
+                ) {
+
+                    bot.blades =
+                        Math.max(1, bot.blades - 1);
+                }
+
+                // BOT STRONGER
+                else {
+
+                    player.blades =
+                        Math.max(1, player.blades - 1);
+                }
+
+                break;
+            }
+        }
+
+        if (collisionHappened) break;
+    }
+
+    // Remove dead bot
+    if (bot.blades <= 0) {
+
+        createLightning(
+            player.x,
+            player.y,
+            bot.x,
+            bot.y,
+            playerSword.color
+        );
+
+        bots.splice(botIndex, 1);
+
+        spawnBot();
+    }
+
+    // Game over
+    if (player.blades <= 0) {
+
+        alert("GAME OVER");
+
+        location.reload();
+    }
+}
+
 // =========================
 // BLADE VS BOTS
 // =========================
