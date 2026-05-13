@@ -455,16 +455,26 @@ ctx.restore();
 
     // Blades
     const orbitRadius = 60 + player.blades * 2;
+
     const playerSword = getSwordLevel(player.blades);
 
     for (let i = 0; i < player.blades; i++) {
+
         const bladeAngle =
             player.angle + (i * Math.PI * 2) / player.blades;
 
-        const bx = player.x + Math.cos(bladeAngle) * orbitRadius;
-        const by = player.y + Math.sin(bladeAngle) * orbitRadius;
+        const bx =
+            player.x + Math.cos(bladeAngle) * orbitRadius;
 
-        drawCrescent(bx, by, bladeAngle + Math.PI / 2, playerSword);
+        const by =
+            player.y + Math.sin(bladeAngle) * orbitRadius;
+
+        drawCrescent(
+            bx,
+            by,
+            bladeAngle + Math.PI / 2,
+            playerSword
+        );
     }
 
     ctx.restore();
