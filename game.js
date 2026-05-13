@@ -237,30 +237,34 @@ function drawCrescent(x, y, rotation, swordData) {
     ctx.translate(x, y);
     ctx.rotate(rotation);
 
+    // Glow
+    ctx.shadowColor = swordData.color;
+    ctx.shadowBlur = 8;
+
+    // Blade shape
     ctx.beginPath();
 
-    ctx.arc(
-        0,
-        0,
-        swordData.size,
-        0.2 * Math.PI,
-        1.8 * Math.PI
-    );
+    // Tip
+    ctx.moveTo(28, 0);
 
-    ctx.lineTo(5, 0);
+    // Upper edge
+    ctx.lineTo(-12, -4);
+
+    // Handle back
+    ctx.lineTo(-20, 0);
+
+    // Lower edge
+    ctx.lineTo(-12, 4);
 
     ctx.closePath();
 
-    // Glow
-    ctx.shadowColor = swordData.color;
-    ctx.shadowBlur = 20;
-
+    // Fill
     ctx.fillStyle = swordData.color;
     ctx.fill();
 
-    // Black border
+    // Border
     ctx.lineWidth = 2;
-    ctx.strokeStyle = "rgba(0,0,0,0.7)";
+    ctx.strokeStyle = "rgba(0,0,0,0.8)";
     ctx.stroke();
 
     ctx.restore();
