@@ -536,7 +536,20 @@
                             sword.color
                         );
 
-                        if (level >= bot.blades || player.inventory[9] >= 999) {
+                        const playerSwordPower =
+                            sword.damage;
+
+                        const botSword =
+                            getSwordLevel(bot.blades);
+
+                        const botPower =
+                            botSword.damage;
+
+                        // WIN
+                        if (
+                            playerSwordPower >= botPower ||
+                            player.inventory[9] >= 100
+                        ) {
 
                             player.inventory[1] += bot.blades;
 
@@ -556,17 +569,13 @@
 
                             dead = true;
                         }
+
+                        // LOSE
                         else {
 
-                            // Remove one weakest blade
                             if (player.inventory[1] > 0) {
 
                                 player.inventory[1]--;
-                            }
-
-                            // Prevent negative blades
-                            if (player.inventory[1] < 0) {
-                                player.inventory[1] = 0;
                             }
 
                             createLightning(
@@ -583,7 +592,6 @@
                                 "#ff0000"
                             );
 
-                            // Only game over when truly no blades left
                             if (getTotalBladePower() <= 0) {
 
                                 gameOver();
