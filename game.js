@@ -11,7 +11,6 @@
     let trailParticles = [];
     let hitSparks = [];
     let lightningEffects = [];
-    let playerBlades = [];
 
     const worldSize = 3000;
 
@@ -135,6 +134,11 @@
         y: 0,
         radius: 40,
         speed: 4,
+
+        inventory: {
+            1: 1
+        },
+
         angle: 0
     };
 
@@ -167,7 +171,13 @@
 
     function getTotalBladePower() {
 
-        return playerBlades.length;
+        let total = 0;
+
+        for (let lvl in player.inventory) {
+            total += player.inventory[lvl] * Number(lvl);
+        }
+
+        return total;
     }
 
     function getSwordLevel(blades) {
@@ -178,6 +188,28 @@
         if (blades < 100) return swordLevels[3];
 
         return swordLevels[4];
+    }
+
+    function mergeBlades() {
+
+        for (let lvl = 1; lvl < swordLevels.length; lvl++) {
+
+            const data = swordLevels[lvl - 1];
+            const nextLevel = lvl + 1;
+
+            if (player.inventory[lvl] >= data.requirement) {
+
+                player.inventory[lvl] -= data.requirement;
+
+                if (!player.inventory[nextLevel]) {
+                    player.inventory[nextLevel] = 0;
+                }
+
+                player.inventory[nextLevel]++;
+
+                mergeBlades();
+            }
+        }
     }
 
     // =========================
@@ -306,11 +338,9 @@
         player.x = worldSize / 2;
         player.y = worldSize / 2;
 
-        playerBlades = [
-            {
-                level: 1
-            }
-        ];
+        player.inventory = {
+            1: 1
+        };
 
         player.angle = 0;
 
@@ -571,7 +601,10 @@
                         // PLAYER WINS
                         // =========================
 
-                        if (playerBlades.length >= 100) {
+                        if (
+                            playerPower > botPower ||
+                            player.inventory[9] >= 100
+                        ) {
 
                             bot.blades--;
 
@@ -592,7 +625,7 @@
 
                                 if (player.inventory[lvl] > 0) {
 
-                                    playerBlades.splice(0, 1);
+                                    player.inventory[lvl]--;
 
                                     break;
                                 }
@@ -611,7 +644,7 @@
 
                                 if (player.inventory[lvl] > 0) {
 
-                                    playerBlades.splice(0, 1);
+                                    player.inventory[lvl]--;
 
                                     break;
                                 }
@@ -733,10 +766,7 @@
 
             if (dist < player.radius + bubble.radius) {
 
-                for (let i = 0; i < bubble.value; i++) {
-
-                    addBlade(1);
-                }
+                player.inventory[1] += bubble.value;
 
                 mergeBlades();
 
