@@ -20,10 +20,10 @@ function createTrail(x, y, color) {
         vx: (Math.random() - 0.5) * 2,
         vy: (Math.random() - 0.5) * 2,
 
-        life: 25,
-        maxLife: 25,
+        life: 8,
+        maxLife: 8,
 
-        size: Math.random() * 6 + 3,
+        size: Math.random() * 3 + 1,
 
         color
     });
@@ -340,6 +340,8 @@ for (let botIndex = bots.length - 1; botIndex >= 0; botIndex--) {
                     playerSword.color
                 );
 
+                if (bot.blades >= 10) {
+
                 createLightning(
                     player.x,
                     player.y,
@@ -347,6 +349,7 @@ for (let botIndex = bots.length - 1; botIndex >= 0; botIndex--) {
                     bot.y,
                     playerSword.color
                 );
+            }
 
                 bots.splice(botIndex, 1);
 
@@ -451,8 +454,7 @@ for (let botIndex = bots.length - 1; botIndex >= 0; botIndex--) {
 // DRAW
 // =========================
 function draw() {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     
 
     ctx.save();
@@ -567,11 +569,14 @@ bots.forEach((bot) => {
             botSword
         );
 
-        createTrail(
-            bx,
-            by,
-            botSword.color
-        );
+        if (Math.random() < 0.15) {
+
+            createTrail(
+                bx,
+                by,
+                playerSword.color
+            );
+        }
     }
 });
 
@@ -636,7 +641,7 @@ bots.forEach((bot) => {
 
         ctx.lineWidth = 3;
 
-        ctx.shadowBlur = 20;
+        ctx.shadowBlur = 8;
         ctx.shadowColor = l.color;
 
         ctx.beginPath();
@@ -711,11 +716,14 @@ ctx.restore();
             playerSword
         );
 
-        createTrail(
-            bx,
-            by,
-            playerSword.color
-        );
+        if (Math.random() < 0.15) {
+
+            createTrail(
+                bx,
+                by,
+                playerSword.color
+            );
+        }
     }
 
     ctx.restore();
