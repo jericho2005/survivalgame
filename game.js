@@ -117,6 +117,7 @@ const swordLevels = [
         color: "#ffffff",
         size: 10,
         damage: 1,
+        speed: 0.05,
         requirement: 10
     },
 
@@ -125,6 +126,7 @@ const swordLevels = [
         color: "#d8f3ff",
         size: 12,
         damage: 2,
+        speed: 0.06,
         requirement: 15
     },
 
@@ -133,6 +135,7 @@ const swordLevels = [
         color: "#9be7ff",
         size: 14,
         damage: 4,
+        speed: 0.07,
         requirement: 20
     },
 
@@ -141,6 +144,7 @@ const swordLevels = [
         color: "#5ab8ff",
         size: 16,
         damage: 7,
+        speed: 0.08,
         requirement: 25
     },
 
@@ -149,6 +153,7 @@ const swordLevels = [
         color: "#2d7dff",
         size: 18,
         damage: 11,
+        speed: 0.09,
         requirement: 30
     },
 
@@ -157,6 +162,7 @@ const swordLevels = [
         color: "#4b3dff",
         size: 21,
         damage: 16,
+        speed: 0.10,
         requirement: 35
     },
 
@@ -165,6 +171,7 @@ const swordLevels = [
         color: "#3a1b7a",
         size: 24,
         damage: 23,
+        speed: 0.15,
         requirement: 40
     },
 
@@ -173,6 +180,7 @@ const swordLevels = [
         color: "#240046",
         size: 28,
         damage: 32,
+        speed: 0.25,
         requirement: 50
     },
 
@@ -181,6 +189,7 @@ const swordLevels = [
         color: "#14001f",
         size: 34,
         damage: 50,
+        speed: 0.30,
         requirement: Infinity
     }
 
@@ -420,7 +429,7 @@ function update() {
     const playerSword =
     getSwordLevel(getTotalBladePower());
 
-    player.angle += playerSword.speed;
+    player.angle += playerSword.speed || 0.05;
 
     // =========================
     // BOT MOVEMENT
@@ -504,8 +513,6 @@ for (let botIndex = bots.length - 1; botIndex >= 0; botIndex--) {
                 playSlashSound();
                 collisionHappened = true;
 
-                
-
                 createHitSparks(
                     (px + bx) / 2,
                     (py + by) / 2,
@@ -528,8 +535,9 @@ for (let botIndex = bots.length - 1; botIndex >= 0; botIndex--) {
                     botSword.level
                 ) {
 
-                    getTotalBladePower() =
-                        Math.max(1, getTotalBladePower() - 1);
+                    if (player.inventory[1] > 1) {
+                        player.inventory[1]--;
+                    }
 
                     bot.blades =
                         Math.max(1, bot.blades - 1);
@@ -548,13 +556,13 @@ for (let botIndex = bots.length - 1; botIndex >= 0; botIndex--) {
                 // BOT STRONGER
                 else {
 
-                    getTotalBladePower() =
-                        Math.max(1, getTotalBladePower() - 1);
+                    if (player.inventory[1] > 1) {
+                        player.inventory[1]--;
+                    }
                 }
 
                 break;
             }
-        }
 
         if (collisionHappened) break;
     }
@@ -583,7 +591,7 @@ for (let botIndex = bots.length - 1; botIndex >= 0; botIndex--) {
         location.reload();
     }
 }
-
+}
 // =========================
 // BLADE VS BOTS
 // =========================
@@ -619,7 +627,8 @@ for (let botIndex = bots.length - 1; botIndex >= 0; botIndex--) {
             // Stronger player wins
             if (getTotalBladePower() >= bot.blades) {
 
-                getTotalBladePower() += bot.blades;
+                player.inventory[1] += bot.blades;
+                    mergeBlades();
 
                 createHitSparks(
                     bot.x,
