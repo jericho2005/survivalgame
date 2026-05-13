@@ -128,12 +128,12 @@ const enemyImages = [];
 
 for (let i = 1; i <= 3; i++) {
     const img = new Image();
-    img.src = `assets/E${i}.png`;
+    img.src = `assets/images/E${i}.png`;
     enemyImages.push(img);
 }
 
 const playerImage = new Image();
-playerImage.src = "assets/AG.png";
+playerImage.src = "assets/imges/AG.png";
 
 const player = {
     x: 0,
