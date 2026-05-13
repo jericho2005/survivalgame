@@ -454,6 +454,168 @@
             }
         });
 
+        // =========================
+        // PLAYER VS BOTS
+        // =========================
+
+        for (let botIndex = bots.length - 1; botIndex >= 0; botIndex--) {
+
+            const bot = bots[botIndex];
+
+            const orbitRadius =
+                120 + getTotalBladePower() * 2;
+
+            let dead = false;
+
+            // Check every player blade
+            for (let level = 1; level <= 9; level++) {
+
+                const amount =
+                    player.inventory[level] || 0;
+
+                if (amount <= 0) continue;
+
+                const sword =
+                    swordLevels[level - 1];
+
+                for (let i = 0; i < amount; i++) {
+
+                    const bladeAngle =
+                        player.angle +
+                        (i * Math.PI * 2 / amount);
+
+                    const bx =
+                        player.x +
+                        Math.cos(bladeAngle) * orbitRadius;
+
+                    const by =
+                        player.y +
+                        Math.sin(bladeAngle) * orbitRadius;
+
+                    const dist =
+                        Math.hypot(
+                            bx - bot.x,
+                            by - bot.y
+                        );
+
+                    if (dist < bot.radius + 15) {
+
+                        playSlashSound();
+
+                        createHitSparks(
+                            bot.x,
+                            bot.y,
+                            sword.color
+                        );
+
+                        if (level >= bot.blades) {
+
+                            player.inventory[1] += bot.blades;
+
+                            mergeBlades();
+
+                            createLightning(
+                                player.x,
+                                player.y,
+                                bot.x,
+                                bot.y,
+                                sword.color
+                            );
+
+                            bots.splice(botIndex, 1);
+
+                            spawnBot();
+
+                            dead = true;
+                        }
+                        else {
+
+                            alert("GAME OVER");
+
+                            location.reload();
+                        }
+
+                        break;
+                    }
+                }
+
+                if (dead) break;
+            }
+        }
+
+        // =========================
+        // PLAYER VS OBSTACLES
+        // =========================
+
+        obstacles.forEach((obs, obsIndex) => {
+
+            const orbitRadius =
+                120 + getTotalBladePower() * 2;
+
+            for (let level = 1; level <= 9; level++) {
+
+                const amount =
+                    player.inventory[level] || 0;
+
+                if (amount <= 0) continue;
+
+                const sword =
+                    swordLevels[level - 1];
+
+                for (let i = 0; i < amount; i++) {
+
+                    const bladeAngle =
+                        player.angle +
+                        (i * Math.PI * 2 / amount);
+
+                    const bx =
+                        player.x +
+                        Math.cos(bladeAngle) * orbitRadius;
+
+                    const by =
+                        player.y +
+                        Math.sin(bladeAngle) * orbitRadius;
+
+                    const dist =
+                        Math.hypot(
+                            bx - obs.x,
+                            by - obs.y
+                        );
+
+                    if (dist < obs.size / 2 + 12) {
+
+                        hitSound.currentTime = 0;
+                        hitSound.volume = 0.2;
+                        hitSound.play();
+
+                        obs.value--;
+
+                        createHitSparks(
+                            bx,
+                            by,
+                            sword.color
+                        );
+                    }
+                }
+            }
+
+            // Destroy obstacle
+            if (obs.value <= 0) {
+
+                createLightning(
+                    player.x,
+                    player.y,
+                    obs.x,
+                    obs.y,
+                    "#00ffff"
+                );
+
+                obstacles.splice(obsIndex, 1);
+
+                spawnObstacle();
+            }
+        });
+
         // Bubble collision
         bubbles.forEach((bubble, index) => {
 
@@ -635,6 +797,32 @@
 
             ctx.fillStyle = "white";
             ctx.fillText(b.value, b.x - 3, b.y + 3);
+        });
+
+                // Obstacles
+        obstacles.forEach((o) => {
+
+            ctx.fillStyle =
+                `hsl(${120 - o.level * 8}, 80%, 45%)`;
+
+            ctx.fillRect(
+                o.x - o.size / 2,
+                o.y - o.size / 2,
+                o.size,
+                o.size
+            );
+
+            ctx.fillStyle = "white";
+
+            ctx.font = "bold 20px Arial";
+
+            ctx.textAlign = "center";
+
+            ctx.fillText(
+                o.value,
+                o.x,
+                o.y + 6
+            );
         });
 
         // Bots
