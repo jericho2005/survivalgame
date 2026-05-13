@@ -925,41 +925,109 @@ bots.forEach((bot) => {
         ctx.stroke();
     });
 
-    // Draw Player Image
-    const playerSize = 80;
+// =========================
+// DRAW ANIMATED PLAYER
+// =========================
 
-        ctx.save();
+function drawPlayerCharacter() {
 
-        ctx.beginPath();
-        ctx.arc(player.x, player.y, playerSize / 2, 0, Math.PI * 2);
-        ctx.closePath();
-        ctx.clip();
+    const bodyBob =
+        Math.sin(Date.now() * 0.01) * 2;
 
-        ctx.drawImage(
-            playerImage,
-            player.x - playerSize / 2,
-            player.y - playerSize / 2,
-            playerSize,
-            playerSize
-        );
+    const walkSwing =
+        Math.sin(Date.now() * 0.02) * 10;
 
-        ctx.beginPath();
+    // BODY
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = 4;
 
-        ctx.arc(
-            player.x,
-            player.y,
-            playerSize / 2,
-            0,
-            Math.PI * 2
-        );
+    // Body
+    ctx.beginPath();
 
-        ctx.strokeStyle = "#00ffcc";
-        ctx.lineWidth = 4;
+    ctx.moveTo(player.x, player.y + 20 + bodyBob);
+    ctx.lineTo(player.x, player.y + 55 + bodyBob);
 
-        ctx.stroke();
+    ctx.stroke();
 
-ctx.restore();
+    // Arms
+    ctx.beginPath();
 
+    ctx.moveTo(player.x - 15, player.y + 35 + bodyBob);
+    ctx.lineTo(player.x + 15, player.y + 35 + bodyBob);
+
+    ctx.stroke();
+
+    // Left leg
+    ctx.beginPath();
+
+    ctx.moveTo(player.x, player.y + 55 + bodyBob);
+
+    ctx.lineTo(
+        player.x - 12,
+        player.y + 80 + walkSwing * 0.2 + bodyBob
+    );
+
+    ctx.stroke();
+
+    // Right leg
+    ctx.beginPath();
+
+    ctx.moveTo(player.x, player.y + 55 + bodyBob);
+
+    ctx.lineTo(
+        player.x + 12,
+        player.y + 80 - walkSwing * 0.2 + bodyBob
+    );
+
+    ctx.stroke();
+
+    // HEAD
+    const headSize = 42;
+
+    ctx.save();
+
+    ctx.beginPath();
+
+    ctx.arc(
+        player.x,
+        player.y,
+        headSize / 2,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.closePath();
+
+    ctx.clip();
+
+    ctx.drawImage(
+        playerImage,
+        player.x - headSize / 2,
+        player.y - headSize / 2,
+        headSize,
+        headSize
+    );
+
+    ctx.restore();
+
+    // Head outline
+    ctx.beginPath();
+
+    ctx.arc(
+        player.x,
+        player.y,
+        headSize / 2,
+        0,
+        Math.PI * 2
+    );
+
+    ctx.strokeStyle = "#00ffcc";
+    ctx.lineWidth = 3;
+
+    ctx.stroke();
+}
+    drawPlayerCharacter();
+    
     // Blades
     const orbitRadius = 60 + player.blades * 2;
 
