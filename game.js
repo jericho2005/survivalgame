@@ -133,7 +133,7 @@ for (let i = 1; i <= 3; i++) {
 }
 
 const playerImage = new Image();
-playerImage.src = "assets/imges/AG.png";
+playerImage.src = "assets/images/AG.png";
 
 const player = {
     x: 0,
