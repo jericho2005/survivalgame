@@ -118,10 +118,10 @@
         {
             level: 9,
             color: "#14001f",
-            size: 34,
+            size: 18,
             damage: 50,
             speed: 0.30,
-            requirement: Infinity
+            requirement: 100
         }
     ];
 
@@ -371,7 +371,7 @@
 
             e.preventDefault();
 
-            // Max blades
+            // 100 max blades only
             player.inventory = {
 
                 1: 0,
@@ -383,23 +383,11 @@
                 7: 0,
                 8: 0,
 
-                // MAX LEVEL
-                9: 999
+                // 100 level 9 blades
+                9: 100
             };
 
-            // Ultra speed
-            player.speed = 8;
-
-            // Massive effects
-            createLightning(
-                player.x - 200,
-                player.y - 200,
-                player.x + 200,
-                player.y + 200,
-                "#ff00ff"
-            );
-
-            console.log("MAX POWER ENABLED");
+            console.log("CHEAT ACTIVATED");
         }
     });
 
