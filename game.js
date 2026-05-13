@@ -10,6 +10,58 @@ let gameRunning = false;
 
 const worldSize = 3000;
 
+const swordLevels = [
+    {
+        level: 1,
+        color: "#00ffcc",
+        size: 12,
+        damage: 0.1,
+        speed: 0.05
+    },
+
+    {
+        level: 2,
+        color: "#00aaff",
+        size: 16,
+        damage: 0.2,
+        speed: 0.07
+    },
+
+    {
+        level: 3,
+        color: "#aa00ff",
+        size: 20,
+        damage: 0.35,
+        speed: 0.1
+    },
+
+    {
+        level: 4,
+        color: "#ff0033",
+        size: 25,
+        damage: 0.5,
+        speed: 0.14
+    },
+
+    {
+        level: 5,
+        color: "#ffd700",
+        size: 32,
+        damage: 1,
+        speed: 0.18
+    }
+];
+
+function getSwordLevel(blades) {
+
+    if (blades < 10) return swordLevels[0];
+    if (blades < 25) return swordLevels[1];
+    if (blades < 50) return swordLevels[2];
+    if (blades < 100) return swordLevels[3];
+
+    return swordLevels[4];
+}
+
 // =========================
 // PLAYER
 // =========================
@@ -123,18 +175,32 @@ window.addEventListener("keyup", (e) => {
 // =========================
 // DRAW BLADE
 // =========================
-function drawCrescent(x, y, rotation) {
+function drawCrescent(x, y, rotation, swordData) {
+
     ctx.save();
 
     ctx.translate(x, y);
     ctx.rotate(rotation);
 
     ctx.beginPath();
-    ctx.arc(0, 0, 15, 0.2 * Math.PI, 1.8 * Math.PI);
+
+    ctx.arc(
+        0,
+        0,
+        swordData.size,
+        0.2 * Math.PI,
+        1.8 * Math.PI
+    );
+
     ctx.lineTo(5, 0);
+
     ctx.closePath();
 
-    ctx.fillStyle = "#00ffcc";
+    // Glow
+    ctx.shadowColor = swordData.color;
+    ctx.shadowBlur = 20;
+
+    ctx.fillStyle = swordData.color;
     ctx.fill();
 
     ctx.restore();
@@ -152,7 +218,9 @@ function update() {
     if (keys["arrowleft"] || keys["a"]) player.x -= player.speed;
     if (keys["arrowright"] || keys["d"]) player.x += player.speed;
 
-    player.angle += 0.05;
+    const playerSword = getSwordLevel(player.blades);
+
+    player.angle += playerSword.speed;
 
     // =========================
     // BOT MOVEMENT
@@ -235,7 +303,7 @@ bots.forEach((bot, botIndex) => {
             const d = Math.hypot(bx - obs.x, by - obs.y);
 
             if (d < 20 + obs.size / 2) {
-                obs.hp -= 0.1;
+                obs.hp -= playerSword.damage;
             }
         }
 
@@ -337,6 +405,7 @@ bots.forEach((bot) => {
 
     // Enemy blades
     const orbitRadius = 60 + bot.blades * 2;
+    const botSword = getSwordLevel(bot.blades);
 
     for (let i = 0; i < bot.blades; i++) {
 
@@ -355,7 +424,8 @@ bots.forEach((bot) => {
         drawCrescent(
             bx,
             by,
-            bladeAngle + Math.PI / 2
+            bladeAngle + Math.PI / 2,
+            botSword
         );
     }
 });
@@ -394,7 +464,7 @@ ctx.restore();
         const bx = player.x + Math.cos(bladeAngle) * orbitRadius;
         const by = player.y + Math.sin(bladeAngle) * orbitRadius;
 
-        drawCrescent(bx, by, bladeAngle + Math.PI / 2);
+        drawCrescent(bx, by, bladeAngle + Math.PI / 2, playerSword);
     }
 
     ctx.restore();
