@@ -242,7 +242,7 @@ function drawCrescent(x, y, rotation, swordData) {
     const innerRadius = swordData.size * 1.9;
 
     // Offset controls thickness
-    const offsetX = swordData.size * 0.9;
+    const offsetX = swordData.size * 1.1;
 
     // Glow
     ctx.shadowColor = swordData.color;
