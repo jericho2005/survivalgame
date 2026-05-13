@@ -530,9 +530,7 @@
                         }
                         else {
 
-                            alert("GAME OVER");
-
-                            location.reload();
+                            gameOver();
                         }
 
                         break;
@@ -984,6 +982,82 @@
         }
 
         ctx.restore();
+    }
+
+    // =========================
+    // GAME OVER SCREEN
+    // =========================
+
+    function gameOver() {
+
+        gameRunning = false;
+
+        cancelAnimationFrame(animationId);
+
+        // Dark overlay
+        ctx.fillStyle = "rgba(0,0,0,0.7)";
+        ctx.fillRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+        // Text
+        ctx.fillStyle = "white";
+        ctx.textAlign = "center";
+
+        ctx.font = "bold 60px Arial";
+        ctx.fillText(
+            "GAME OVER",
+            canvas.width / 2,
+            canvas.height / 2 - 80
+        );
+
+        // Retry button
+        const btn = document.createElement("button");
+
+        btn.innerText = "Retry";
+
+        btn.style.position = "absolute";
+        btn.style.left = "50%";
+        btn.style.top = "50%";
+
+        btn.style.transform =
+            "translate(-50%, -50%)";
+
+        btn.style.padding =
+            "20px 40px";
+
+        btn.style.fontSize =
+            "28px";
+
+        btn.style.cursor =
+            "pointer";
+
+        btn.style.border =
+            "none";
+
+        btn.style.borderRadius =
+            "12px";
+
+        btn.style.background =
+            "#00ffcc";
+
+        btn.style.color =
+            "black";
+
+        btn.style.fontWeight =
+            "bold";
+
+        document.body.appendChild(btn);
+
+        btn.onclick = () => {
+
+            btn.remove();
+
+            startGame();
+        };
     }
 
     // =========================
