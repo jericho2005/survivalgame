@@ -585,9 +585,7 @@ obstacles.forEach((obs, obsIndex) => {
         if (d < obs.size / 2 + 12) {
 
             // Minus obstacle number
-            obs.value -= Math.ceil(
-                playerSword.damage * 10
-            );
+            obs.value -= 1;
 
             createHitSparks(
                 bx,
