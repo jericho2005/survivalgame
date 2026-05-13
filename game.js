@@ -66,8 +66,7 @@ function getSwordLevel(blades) {
 // PLAYER
 // =========================
 
-const playerImage = new Image();
-playerImage.src = "assets/player.png";
+
 
 const enemyImages = [];
 
