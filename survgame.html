@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blade Storm</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #1a1a1a; font-family: sans-serif; }
+        canvas { display: block; }
+        #ui {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            pointer-events: none;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        #menu {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 40px;
+            border-radius: 15px;
+            color: white;
+        }
+        button {
+            padding: 10px 30px;
+            font-size: 20px;
+            background: #00ffcc;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="ui">
+        <h2 id="score">Blades: 1</h2>
+    </div>
+
+    <div id="menu">
+        <h1>BLADE STORM</h1>
+        <p>Collect bubbles to grow your blade orbit.<br>Destroy obstacles to clear the path!</p>
+        <button onclick="startGame()">START GAME</button>
+    </div>
+
+    <canvas id="gameCanvas"></canvas>
+
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const scoreEl = document.getElementById('score');
+const menu = document.getElementById('menu');
+
+let animationId;
+let gameRunning = false;
+
+// Game State
+const player = {
+    x: 0,
+    y: 0,
+    radius: 20,
+    speed: 4,
+    blades: 1,
+    angle: 0
+};
+
+let bubbles = [];
+let obstacles = [];
+let bots = [];
+const worldSize = 3000;
+
+function init() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    player.x = worldSize / 2;
+    player.y = worldSize / 2;
+    
+    bubbles = [];
+    obstacles = [];
+    bots = [];
+
+    // Spawn initial items
+    for(let i=0; i<100; i++) spawnBubble();
+    for(let i=0; i<60; i++) spawnObstacle();
+    for(let i=0; i<10; i++) spawnBot();
+}
+
+function spawnBubble() {
+    bubbles.push({
+        x: Math.random() * worldSize,
+        y: Math.random() * worldSize,
+        value: Math.floor(Math.random() * 3) + 1,
+        radius: 15
+    });
+}
+
+function spawnObstacle() {
+    let level = Math.floor(Math.random() * 10) + 1;
+    obstacles.push({
+        x: Math.random() * worldSize,
+        y: Math.random() * worldSize,
+        hp: level * 5,
+        maxHp: level * 5,
+        level: level,
+        size: 30 + (level * 5)
+    });
+}
+
+function spawnBot() {
+    bots.push({
+        x: Math.random() * worldSize,
+        y: Math.random() * worldSize,
+        blades: Math.floor(Math.random() * 5) + 1,
+        angle: 0,
+        vx: (Math.random() - 0.5) * 2,
+        vy: (Math.random() - 0.5) * 2
+    });
+}
+
+// Controls
+const keys = {};
+window.onkeydown = (e) => keys[e.key] = true;
+window.onkeyup = (e) => keys[e.key] = false;
+
+function drawCrescent(x, y, rotation) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(rotation);
+    ctx.beginPath();
+    ctx.arc(0, 0, 15, 0.2 * Math.PI, 1.8 * Math.PI);
+    ctx.lineTo(5, 0);
+    ctx.closePath();
+    ctx.fillStyle = "#00ffcc";
+    ctx.fill();
+    ctx.restore();
+}
+
+function update() {
+    if(!gameRunning) return;
+
+    // Player Movement
+    if(keys['ArrowUp'] || keys['w']) player.y -= player.speed;
+    if(keys['ArrowDown'] || keys['s']) player.y += player.speed;
+    if(keys['ArrowLeft'] || keys['a']) player.x -= player.speed;
+    if(keys['ArrowRight'] || keys['d']) player.x += player.speed;
+
+    player.angle += 0.05;
+
+    // Collision: Bubbles
+    bubbles.forEach((b, i) => {
+        let dist = Math.hypot(player.x - b.x, player.y - b.y);
+        if(dist < player.radius + b.radius) {
+            player.blades += b.value;
+            bubbles.splice(i, 1);
+            spawnBubble();
+        }
+    });
+
+    // Blade Collision: Obstacles
+    obstacles.forEach((obs, i) => {
+        let orbitRadius = 60 + (player.blades * 2);
+        for(let j=0; j<player.blades; j++) {
+            let bAngle = player.angle + (j * (Math.PI * 2 / player.blades));
+            let bx = player.x + Math.cos(bAngle) * orbitRadius;
+            let by = player.y + Math.sin(bAngle) * orbitRadius;
+            
+            let d = Math.hypot(bx - obs.x, by - obs.y);
+            if(d < 20 + obs.size/2) {
+                obs.hp -= 0.1;
+            }
+        }
+        if(obs.hp <= 0) {
+            obstacles.splice(i, 1);
+            spawnObstacle();
+        }
+    });
+
+    scoreEl.innerText = Blades: ${player.blades};
+    
+    draw();
+    animationId = requestAnimationFrame(update);
+}
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    ctx.save();
+    // Camera follow
+    ctx.translate(canvas.width/2 - player.x, canvas.height/2 - player.y);
+
+    // Draw Field Grid
+    ctx.strokeStyle = "#333";
+    for(let i=0; i<=worldSize; i+=100) {
+        ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, worldSize); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(worldSize, i); ctx.stroke();
+    }
+
+    // Draw Bubbles
+    bubbles.forEach(b => {
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, b.radius, 0, Math.PI*2);
+        ctx.fillStyle = "rgba(0, 255, 200, 0.3)";
+        ctx.fill();
+        ctx.strokeStyle = "#00ffcc";
+        ctx.stroke();
+        ctx.fillStyle = "white";
+        ctx.fillText(b.value, b.x-3, b.y+3);
+    });
+
+    // Draw Obstacles
+    obstacles.forEach(o => {
+        ctx.fillStyle = hsl(${200 - o.level * 20}, 70%, 50%);
+        ctx.fillRect(o.x - o.size/2, o.y - o.size/2, o.size, o.size);
+        ctx.fillStyle = "white";
+        ctx.fillText(LVL ${o.level}, o.x - 15, o.y);
+    });
+
+    // Draw Player
+    ctx.beginPath();
+    ctx.arc(player.x, player.y, player.radius, 0, Math.PI*2);
+    ctx.fillStyle = "#ff0066";
+    ctx.fill();
+
+    // Draw Player Blades
+    let orbitRadius = 60 + (player.blades * 2);
+    for(let i=0; i<player.blades; i++) {
+        let bAngle = player.angle + (i * (Math.PI * 2 / player.blades));
+        let bx = player.x + Math.cos(bAngle) * orbitRadius;
+        let by = player.y + Math.sin(bAngle) * orbitRadius;
+        drawCrescent(bx, by, bAngle + Math.PI/2);
+    }
+
+    ctx.restore();
+}
+
+function startGame() {
+    menu.style.display = 'none';
+    gameRunning = true;
+    init();
+    update();
+}
+
+window.onresize = () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+};
+</script>
+</body>
+</html>
