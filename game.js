@@ -455,6 +455,7 @@ ctx.restore();
 
     // Blades
     const orbitRadius = 60 + player.blades * 2;
+    const playerSword = getSwordLevel(player.blades);
 
     for (let i = 0; i < player.blades; i++) {
         const bladeAngle =
