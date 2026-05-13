@@ -201,7 +201,7 @@ function spawnObstacle() {
 
         value,
 
-        size: 40 + level * 6
+        size: 35 + value * 0.08
     });
 }
 
@@ -552,29 +552,67 @@ for (let botIndex = bots.length - 1; botIndex >= 0; botIndex--) {
         }
     });
 
-    // Blade collision
-    obstacles.forEach((obs, obsIndex) => {
-        const orbitRadius = 60 + player.blades * 2;
+    // =========================
+// BLADE VS OBSTACLES
+// =========================
 
-        for (let i = 0; i < player.blades; i++) {
-            const bladeAngle =
-                player.angle + (i * Math.PI * 2) / player.blades;
+obstacles.forEach((obs, obsIndex) => {
 
-            const bx = player.x + Math.cos(bladeAngle) * orbitRadius;
-            const by = player.y + Math.sin(bladeAngle) * orbitRadius;
+    const orbitRadius =
+        60 + player.blades * 2;
 
-            const d = Math.hypot(bx - obs.x, by - obs.y);
+    for (let i = 0; i < player.blades; i++) {
 
-            if (d < 20 + obs.size / 2) {
-                obs.hp -= playerSword.damage;
-            }
+        const bladeAngle =
+            player.angle +
+            (i * Math.PI * 2) / player.blades;
+
+        const bx =
+            player.x +
+            Math.cos(bladeAngle) * orbitRadius;
+
+        const by =
+            player.y +
+            Math.sin(bladeAngle) * orbitRadius;
+
+        const d =
+            Math.hypot(
+                bx - obs.x,
+                by - obs.y
+            );
+
+        // Blade touches obstacle
+        if (d < obs.size / 2 + 12) {
+
+            // Minus obstacle number
+            obs.value -= Math.ceil(
+                playerSword.damage * 10
+            );
+
+            createHitSparks(
+                bx,
+                by,
+                playerSword.color
+            );
         }
+    }
 
-        if (obs.hp <= 0) {
-            obstacles.splice(obsIndex, 1);
-            spawnObstacle();
-        }
-    });
+    // Destroy obstacle
+    if (obs.value <= 0) {
+
+        createLightning(
+            player.x,
+            player.y,
+            obs.x,
+            obs.y,
+            playerSword.color
+        );
+
+        obstacles.splice(obsIndex, 1);
+
+        spawnObstacle();
+    }
+});
 
     // =========================
     // UPDATE PARTICLES
@@ -680,7 +718,7 @@ function draw() {
 
     // Obstacles
     obstacles.forEach((o) => {
-        ctx.fillStyle = `hsl(${200 - o.level * 20}, 70%, 50%)`;
+        ctx.fillStyle = `hsl(${120 - o.level * 8}, 80%, 45%)`;
 
         ctx.fillRect(
             o.x - o.size / 2,
@@ -690,7 +728,17 @@ function draw() {
         );
 
         ctx.fillStyle = "white";
-        ctx.fillText(`LVL ${o.level}`, o.x - 15, o.y);
+        ctx.font = "bold 20px Arial";
+
+        ctx.fillStyle = "white";
+
+        ctx.textAlign = "center";
+
+        ctx.fillText(
+            o.value,
+            o.x,
+            o.y + 6
+        );
     });
 
     // =========================
