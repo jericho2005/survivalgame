@@ -483,126 +483,203 @@
         });
 
         // =========================
-        // PLAYER VS BOTS
+        // PLAYER BLADES VS BOT BLADES
         // =========================
 
         for (let botIndex = bots.length - 1; botIndex >= 0; botIndex--) {
 
             const bot = bots[botIndex];
 
-            const orbitRadius =
-                120 + getTotalBladePower() * 2;
+            // PLAYER BLADES
+            let playerBlades = [];
 
-            let dead = false;
-
-            // Check every player blade
             for (let level = 1; level <= 9; level++) {
 
                 const amount =
                     player.inventory[level] || 0;
-
-                if (amount <= 0) continue;
 
                 const sword =
                     swordLevels[level - 1];
 
                 for (let i = 0; i < amount; i++) {
 
-                    const bladeAngle =
-                        player.angle +
-                        (i * Math.PI * 2 / amount);
+                    playerBlades.push({
+                        level,
+                        sword
+                    });
+                }
+            }
+
+            // BOT BLADES
+            let botBlades = [];
+
+            const botSword =
+                getSwordLevel(bot.blades);
+
+            for (let i = 0; i < bot.blades; i++) {
+
+                botBlades.push({
+                    sword: botSword
+                });
+            }
+
+            const playerOrbit =
+                120 + playerBlades.length * 2;
+
+            const botOrbit =
+                60 + bot.blades * 2;
+
+            let botDead = false;
+
+            // =========================
+            // COLLISION CHECK
+            // =========================
+
+            for (let i = 0; i < playerBlades.length; i++) {
+
+                const playerBlade =
+                    playerBlades[i];
+
+                const playerAngle =
+                    player.angle +
+                    (i * Math.PI * 2 / playerBlades.length);
+
+                const px =
+                    player.x +
+                    Math.cos(playerAngle) * playerOrbit;
+
+                const py =
+                    player.y +
+                    Math.sin(playerAngle) * playerOrbit;
+
+                for (let j = 0; j < botBlades.length; j++) {
+
+                    const enemyBlade =
+                        botBlades[j];
+
+                    const botAngle =
+                        bot.angle +
+                        (j * Math.PI * 2 / botBlades.length);
 
                     const bx =
-                        player.x +
-                        Math.cos(bladeAngle) * orbitRadius;
+                        bot.x +
+                        Math.cos(botAngle) * botOrbit;
 
                     const by =
-                        player.y +
-                        Math.sin(bladeAngle) * orbitRadius;
+                        bot.y +
+                        Math.sin(botAngle) * botOrbit;
 
                     const dist =
-                        Math.hypot(
-                            bx - bot.x,
-                            by - bot.y
-                        );
+                        Math.hypot(px - bx, py - by);
 
-                    if (dist < bot.radius + 15) {
+                    // Blade hit
+                    if (dist < 25) {
 
                         playSlashSound();
 
                         createHitSparks(
-                            bot.x,
-                            bot.y,
-                            sword.color
+                            (px + bx) / 2,
+                            (py + by) / 2,
+                            playerBlade.sword.color
                         );
 
-                        const playerSwordPower =
-                            sword.damage;
+                        createLightning(
+                            px,
+                            py,
+                            bx,
+                            by,
+                            playerBlade.sword.color
+                        );
 
-                        const botSword =
-                            getSwordLevel(bot.blades);
+                        const playerPower =
+                            playerBlade.sword.damage;
 
                         const botPower =
-                            botSword.damage;
+                            enemyBlade.sword.damage;
 
-                        // WIN
+                        // =========================
+                        // PLAYER WINS
+                        // =========================
+
                         if (
-                            playerSwordPower >= botPower ||
+                            playerPower > botPower ||
                             player.inventory[9] >= 100
                         ) {
 
-                            player.inventory[1] += bot.blades;
+                            bot.blades--;
+
+                            // Gain 1 blade
+                            player.inventory[1]++;
 
                             mergeBlades();
+                        }
+
+                        // =========================
+                        // BOT WINS
+                        // =========================
+
+                        else if (botPower > playerPower) {
+
+                            // Remove weakest player blade
+                            for (let lvl = 1; lvl <= 9; lvl++) {
+
+                                if (player.inventory[lvl] > 0) {
+
+                                    player.inventory[lvl]--;
+
+                                    break;
+                                }
+                            }
+                        }
+
+                        // =========================
+                        // SAME POWER
+                        // =========================
+
+                        else {
+
+                            bot.blades--;
+
+                            for (let lvl = 1; lvl <= 9; lvl++) {
+
+                                if (player.inventory[lvl] > 0) {
+
+                                    player.inventory[lvl]--;
+
+                                    break;
+                                }
+                            }
+                        }
+
+                        // BOT DEAD
+                        if (bot.blades <= 0) {
 
                             createLightning(
                                 player.x,
                                 player.y,
                                 bot.x,
                                 bot.y,
-                                sword.color
+                                "#00ffff"
                             );
 
                             bots.splice(botIndex, 1);
 
                             spawnBot();
 
-                            dead = true;
+                            botDead = true;
                         }
 
-                        // LOSE
-                        else {
+                        // PLAYER DEAD
+                        if (getTotalBladePower() <= 0) {
 
-                            if (player.inventory[1] > 0) {
-
-                                player.inventory[1]--;
-                            }
-
-                            createLightning(
-                                bot.x,
-                                bot.y,
-                                player.x,
-                                player.y,
-                                "#ff0000"
-                            );
-
-                            createHitSparks(
-                                player.x,
-                                player.y,
-                                "#ff0000"
-                            );
-
-                            if (getTotalBladePower() <= 0) {
-
-                                gameOver();
-                            }
+                            gameOver();
                         }
 
                         break;
                     }
                 }
 
-                if (dead) break;
+                if (botDead) break;
             }
         }
 
