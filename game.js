@@ -181,15 +181,27 @@ function spawnBubble() {
 }
 
 function spawnObstacle() {
-    const level = Math.floor(Math.random() * 10) + 1;
+
+    const level =
+        Math.floor(Math.random() * 10) + 1;
+
+    // Random value based on level
+    const value =
+        Math.floor(
+            Math.random() *
+            (level * 20)
+        ) + level * 10;
 
     obstacles.push({
+
         x: Math.random() * worldSize,
         y: Math.random() * worldSize,
-        hp: level * 5,
-        maxHp: level * 5,
-        level: level,
-        size: 30 + level * 5
+
+        level,
+
+        value,
+
+        size: 40 + level * 6
     });
 }
 
