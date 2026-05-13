@@ -687,8 +687,19 @@ bots.forEach((bot) => {
             playerSize
         );
 
+        ctx.beginPath();
+
+        ctx.arc(
+            player.x,
+            player.y,
+            playerSize / 2,
+            0,
+            Math.PI * 2
+        );
+
         ctx.strokeStyle = "#00ffcc";
         ctx.lineWidth = 4;
+
         ctx.stroke();
 
 ctx.restore();
