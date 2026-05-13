@@ -13,10 +13,14 @@ const worldSize = 3000;
 // =========================
 // PLAYER
 // =========================
+
+const playerImage = new Image();
+playerImage.src = "assets/AG.png";
+
 const player = {
     x: 0,
     y: 0,
-    radius: 20,
+    radius: 40,
     speed: 4,
     blades: 1,
     angle: 0
@@ -231,12 +235,29 @@ function draw() {
         ctx.fillText(`LVL ${o.level}`, o.x - 15, o.y);
     });
 
-    // Player
-    ctx.beginPath();
-    ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
+    // Draw Player Image
+    const playerSize = 80;
 
-    ctx.fillStyle = "#ff0066";
-    ctx.fill();
+        ctx.save();
+
+        ctx.beginPath();
+        ctx.arc(player.x, player.y, playerSize / 2, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.clip();
+
+        ctx.drawImage(
+            playerImage,
+            player.x - playerSize / 2,
+            player.y - playerSize / 2,
+            playerSize,
+            playerSize
+        );
+
+        ctx.strokeStyle = "#00ffcc";
+        ctx.lineWidth = 4;
+        ctx.stroke();
+
+ctx.restore();
 
     // Blades
     const orbitRadius = 60 + player.blades * 2;
