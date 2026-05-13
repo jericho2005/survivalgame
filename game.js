@@ -360,7 +360,47 @@
     const keys = {};
 
     window.addEventListener("keydown", (e) => {
+
         keys[e.key.toLowerCase()] = true;
+
+        // =========================
+        // CHEAT CODE - F11
+        // =========================
+
+        if (e.key === "F11") {
+
+            e.preventDefault();
+
+            // Max blades
+            player.inventory = {
+
+                1: 0,
+                2: 0,
+                3: 0,
+                4: 0,
+                5: 0,
+                6: 0,
+                7: 0,
+                8: 0,
+
+                // MAX LEVEL
+                9: 999
+            };
+
+            // Ultra speed
+            player.speed = 8;
+
+            // Massive effects
+            createLightning(
+                player.x - 200,
+                player.y - 200,
+                player.x + 200,
+                player.y + 200,
+                "#ff00ff"
+            );
+
+            console.log("MAX POWER ENABLED");
+        }
     });
 
     window.addEventListener("keyup", (e) => {
@@ -508,7 +548,7 @@
                             sword.color
                         );
 
-                        if (level >= bot.blades) {
+                        if (level >= bot.blades || player.inventory[9] >= 999) {
 
                             player.inventory[1] += bot.blades;
 
