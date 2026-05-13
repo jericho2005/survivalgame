@@ -7,6 +7,62 @@ const startBtn = document.getElementById("startBtn");
 
 let animationId;
 let gameRunning = false;
+let trailParticles = [];
+let hitSparks = [];
+let lightningEffects = [];
+
+function createTrail(x, y, color) {
+
+    trailParticles.push({
+        x,
+        y,
+
+        vx: (Math.random() - 0.5) * 2,
+        vy: (Math.random() - 0.5) * 2,
+
+        life: 25,
+        maxLife: 25,
+
+        size: Math.random() * 6 + 3,
+
+        color
+    });
+}
+
+function createHitSparks(x, y, color) {
+
+    for (let i = 0; i < 15; i++) {
+
+        hitSparks.push({
+            x,
+            y,
+
+            vx: (Math.random() - 0.5) * 10,
+            vy: (Math.random() - 0.5) * 10,
+
+            size: Math.random() * 5 + 2,
+
+            life: 30,
+            maxLife: 30,
+
+            color
+        });
+    }
+}
+
+function createLightning(x1, y1, x2, y2, color) {
+
+    lightningEffects.push({
+        x1,
+        y1,
+        x2,
+        y2,
+
+        color,
+
+        life: 6
+    });
+}
 
 const worldSize = 3000;
 
@@ -241,40 +297,72 @@ function update() {
         }
     });
 
-    // =========================
-// PLAYER VS BOTS
 // =========================
-bots.forEach((bot, botIndex) => {
+// BLADE VS BOTS
+// =========================
 
-    const dist = Math.hypot(
-        player.x - bot.x,
-        player.y - bot.y
-    );
+for (let botIndex = bots.length - 1; botIndex >= 0; botIndex--) {
 
-    // Player stronger
-    if (
-        dist < 60 &&
-        player.blades > bot.blades
-    ) {
+    const bot = bots[botIndex];
 
-        player.blades += bot.blades;
+    const orbitRadius = 60 + player.blades * 2;
 
-        bots.splice(botIndex, 1);
+    for (let i = 0; i < player.blades; i++) {
 
-        spawnBot();
+        const bladeAngle =
+            player.angle +
+            (i * Math.PI * 2 / player.blades);
+
+        const bx =
+            player.x +
+            Math.cos(bladeAngle) * orbitRadius;
+
+        const by =
+            player.y +
+            Math.sin(bladeAngle) * orbitRadius;
+
+        const dist = Math.hypot(
+            bx - bot.x,
+            by - bot.y
+        );
+
+        // Blade edge touches enemy
+        if (dist < bot.radius + 10) {
+
+            // Stronger player wins
+            if (player.blades >= bot.blades) {
+
+                player.blades += bot.blades;
+
+                createHitSparks(
+                    bot.x,
+                    bot.y,
+                    playerSword.color
+                );
+
+                createLightning(
+                    player.x,
+                    player.y,
+                    bot.x,
+                    bot.y,
+                    playerSword.color
+                );
+
+                bots.splice(botIndex, 1);
+
+                spawnBot();
+            }
+            else {
+
+                alert("GAME OVER");
+
+                location.reload();
+            }
+
+            break;
+        }
     }
-
-    // Enemy stronger
-    else if (
-        dist < 60 &&
-        bot.blades > player.blades
-    ) {
-
-        alert("GAME OVER");
-
-        location.reload();
-    }
-});
+}
 
     // Bubble collision
     bubbles.forEach((bubble, index) => {
@@ -312,6 +400,46 @@ bots.forEach((bot, botIndex) => {
         }
     });
 
+    // =========================
+    // UPDATE PARTICLES
+    // =========================
+
+    trailParticles.forEach((p, index) => {
+
+        p.x += p.vx;
+        p.y += p.vy;
+
+        p.life--;
+
+        if (p.life <= 0) {
+            trailParticles.splice(index, 1);
+        }
+    });
+
+    hitSparks.forEach((p, index) => {
+
+        p.x += p.vx;
+        p.y += p.vy;
+
+        p.vx *= 0.96;
+        p.vy *= 0.96;
+
+        p.life--;
+
+        if (p.life <= 0) {
+            hitSparks.splice(index, 1);
+        }
+    });
+
+    lightningEffects.forEach((l, index) => {
+
+        l.life--;
+
+        if (l.life <= 0) {
+            lightningEffects.splice(index, 1);
+        }
+    });
+
     scoreEl.innerText = `Blades: ${player.blades}`;
 
     draw();
@@ -323,15 +451,27 @@ bots.forEach((bot, botIndex) => {
 // DRAW
 // =========================
 function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
 
     ctx.save();
 
-    // Camera
-    ctx.translate(
-        canvas.width / 2 - player.x,
-        canvas.height / 2 - player.y
-    );
+        // =========================
+        // DYNAMIC CAMERA ZOOM
+        // =========================
+
+        // More blades = more zoom out
+        let zoom = 1 - (player.blades * 0.003);
+
+        // Clamp zoom
+        zoom = Math.max(0.35, zoom);
+
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+
+        ctx.scale(zoom, zoom);
+
+        ctx.translate(-player.x, -player.y);
 
     // Grid
     ctx.strokeStyle = "#333";
@@ -426,8 +566,103 @@ bots.forEach((bot) => {
             bladeAngle + Math.PI / 2,
             botSword
         );
+
+        createTrail(
+            bx,
+            by,
+            botSword.color
+        );
     }
 });
+
+    // =========================
+    // DRAW TRAILS
+    // =========================
+    trailParticles.forEach((p) => {
+
+        const alpha = p.life / p.maxLife;
+
+        ctx.globalAlpha = alpha;
+
+        ctx.beginPath();
+
+        ctx.arc(
+            p.x,
+            p.y,
+            p.size,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fillStyle = p.color;
+
+        ctx.fill();
+
+        ctx.globalAlpha = 1;
+    });
+
+    // =========================
+    // DRAW SPARKS
+    // =========================
+    hitSparks.forEach((p) => {
+
+        const alpha = p.life / p.maxLife;
+
+        ctx.globalAlpha = alpha;
+
+        ctx.beginPath();
+
+        ctx.arc(
+            p.x,
+            p.y,
+            p.size,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fillStyle = p.color;
+
+        ctx.fill();
+
+        ctx.globalAlpha = 1;
+    });
+
+    // =========================
+    // DRAW LIGHTNING
+    // =========================
+    lightningEffects.forEach((l) => {
+
+        ctx.strokeStyle = l.color;
+
+        ctx.lineWidth = 3;
+
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = l.color;
+
+        ctx.beginPath();
+
+        ctx.moveTo(l.x1, l.y1);
+
+        // Jagged lightning
+        for (let i = 1; i < 6; i++) {
+
+            const t = i / 6;
+
+            const x =
+                l.x1 + (l.x2 - l.x1) * t +
+                (Math.random() - 0.5) * 30;
+
+            const y =
+                l.y1 + (l.y2 - l.y1) * t +
+                (Math.random() - 0.5) * 30;
+
+            ctx.lineTo(x, y);
+        }
+
+        ctx.lineTo(l.x2, l.y2);
+
+        ctx.stroke();
+    });
 
     // Draw Player Image
     const playerSize = 80;
@@ -474,6 +709,12 @@ ctx.restore();
             by,
             bladeAngle + Math.PI / 2,
             playerSword
+        );
+
+        createTrail(
+            bx,
+            by,
+            playerSword.color
         );
     }
 
