@@ -786,6 +786,108 @@ obstacles.forEach((obs, obsIndex) => {
 }
 
 // =========================
+    // DRAW ANIMATED PLAYER
+    // =========================
+
+    function drawPlayerCharacter() {
+
+        const bodyBob =
+            Math.sin(Date.now() * 0.01) * 2;
+
+        const walkSwing =
+            Math.sin(Date.now() * 0.02) * 10;
+
+        // BODY
+        ctx.strokeStyle = "white";
+        ctx.lineWidth = 4;
+
+        // Body
+        ctx.beginPath();
+
+        ctx.moveTo(player.x, player.y + 20 + bodyBob);
+        ctx.lineTo(player.x, player.y + 55 + bodyBob);
+
+        ctx.stroke();
+
+        // Arms
+        ctx.beginPath();
+
+        ctx.moveTo(player.x - 15, player.y + 35 + bodyBob);
+        ctx.lineTo(player.x + 15, player.y + 35 + bodyBob);
+
+        ctx.stroke();
+
+        // Left leg
+        ctx.beginPath();
+
+        ctx.moveTo(player.x, player.y + 55 + bodyBob);
+
+        ctx.lineTo(
+            player.x - 12,
+            player.y + 80 + walkSwing * 0.2 + bodyBob
+        );
+
+        ctx.stroke();
+
+        // Right leg
+        ctx.beginPath();
+
+        ctx.moveTo(player.x, player.y + 55 + bodyBob);
+
+        ctx.lineTo(
+            player.x + 12,
+            player.y + 80 - walkSwing * 0.2 + bodyBob
+        );
+
+        ctx.stroke();
+
+        // HEAD
+        const headSize = 42;
+
+        ctx.save();
+
+        ctx.beginPath();
+
+        ctx.arc(
+            player.x,
+            player.y,
+            headSize / 2,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.closePath();
+
+        ctx.clip();
+
+        ctx.drawImage(
+            playerImage,
+            player.x - headSize / 2,
+            player.y - headSize / 2,
+            headSize,
+            headSize
+        );
+
+        ctx.restore();
+
+        // Head outline
+        ctx.beginPath();
+
+        ctx.arc(
+            player.x,
+            player.y,
+            headSize / 2,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.strokeStyle = "#00ffcc";
+        ctx.lineWidth = 3;
+
+        ctx.stroke();
+    }
+
+// =========================
 // DRAW
 // =========================
 function draw() {
@@ -1014,152 +1116,53 @@ bots.forEach((bot) => {
         ctx.stroke();
     });
 
+    drawPlayerCharacter(); 
     // =========================
-    // DRAW ANIMATED PLAYER
+    // MULTI-RING BLADE SYSTEM
     // =========================
 
-    function drawPlayerCharacter() {
+    let ring = 0;
 
-        const bodyBob =
-            Math.sin(Date.now() * 0.01) * 2;
+    for (let level = 1; level <= 9; level++) {
 
-        const walkSwing =
-            Math.sin(Date.now() * 0.02) * 10;
+        const amount =
+            player.inventory[level] || 0;
 
-        // BODY
-        ctx.strokeStyle = "white";
-        ctx.lineWidth = 4;
+        if (amount <= 0) continue;
 
-        // Body
-        ctx.beginPath();
+        const sword =
+            swordLevels[level - 1];
 
-        ctx.moveTo(player.x, player.y + 20 + bodyBob);
-        ctx.lineTo(player.x, player.y + 55 + bodyBob);
+        // Ring distance
+        const orbitRadius =
+            120 + ring * 70;
 
-        ctx.stroke();
+        for (let i = 0; i < amount; i++) {
 
-        // Arms
-        ctx.beginPath();
+            const bladeAngle =
+                player.angle +
+                (i * Math.PI * 2 / amount);
 
-        ctx.moveTo(player.x - 15, player.y + 35 + bodyBob);
-        ctx.lineTo(player.x + 15, player.y + 35 + bodyBob);
+            const bx =
+                player.x +
+                Math.cos(bladeAngle) * orbitRadius;
 
-        ctx.stroke();
+            const by =
+                player.y +
+                Math.sin(bladeAngle) * orbitRadius;
 
-        // Left leg
-        ctx.beginPath();
+            drawCrescent(
+                bx,
+                by,
+                bladeAngle + Math.PI / 2,
+                sword
+            );
+        }
 
-        ctx.moveTo(player.x, player.y + 55 + bodyBob);
-
-        ctx.lineTo(
-            player.x - 12,
-            player.y + 80 + walkSwing * 0.2 + bodyBob
-        );
-
-        ctx.stroke();
-
-        // Right leg
-        ctx.beginPath();
-
-        ctx.moveTo(player.x, player.y + 55 + bodyBob);
-
-        ctx.lineTo(
-            player.x + 12,
-            player.y + 80 - walkSwing * 0.2 + bodyBob
-        );
-
-        ctx.stroke();
-
-        // HEAD
-        const headSize = 42;
-
-        ctx.save();
-
-        ctx.beginPath();
-
-        ctx.arc(
-            player.x,
-            player.y,
-            headSize / 2,
-            0,
-            Math.PI * 2
-        );
-
-        ctx.closePath();
-
-        ctx.clip();
-
-        ctx.drawImage(
-            playerImage,
-            player.x - headSize / 2,
-            player.y - headSize / 2,
-            headSize,
-            headSize
-        );
-
-        ctx.restore();
-
-        // Head outline
-        ctx.beginPath();
-
-        ctx.arc(
-            player.x,
-            player.y,
-            headSize / 2,
-            0,
-            Math.PI * 2
-        );
-
-        ctx.strokeStyle = "#00ffcc";
-        ctx.lineWidth = 3;
-
-        ctx.stroke();
-    }
-    drawPlayerCharacter();
-}    
-    // =========================
-// MULTI-RING BLADE SYSTEM
-// =========================
-
-let ring = 0;
-
-for (let level = 1; level <= 9; level++) {
-
-    const amount =
-        player.inventory[level] || 0;
-
-    if (amount <= 0) continue;
-
-    const sword =
-        swordLevels[level - 1];
-
-    // Ring distance
-    const orbitRadius =
-        120 + ring * 70;
-
-    for (let i = 0; i < amount; i++) {
-
-        const bladeAngle =
-            player.angle +
-            (i * Math.PI * 2 / amount);
-
-        const bx =
-            player.x +
-            Math.cos(bladeAngle) * orbitRadius;
-
-        const by =
-            player.y +
-            Math.sin(bladeAngle) * orbitRadius;
-
-        drawCrescent(
-            bx,
-            by,
-            bladeAngle + Math.PI / 2,
-            sword
-        );
+        ring++;
     }
 
-    ring++;
+    ctx.restore();
 }
 
 // =========================
