@@ -386,6 +386,16 @@ for (let botIndex = bots.length - 1; botIndex >= 0; botIndex--) {
                     playerSword.color
                 );
 
+                createLightning(
+                    px,
+                    py,
+                    bx,
+                    by,
+                    playerSword.level >= botSword.level
+                        ? playerSword.color
+                        : botSword.color
+                );
+
                 // SAME LEVEL
                 if (
                     playerSword.level ===
