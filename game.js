@@ -11,6 +11,18 @@ let trailParticles = [];
 let hitSparks = [];
 let lightningEffects = [];
 
+
+const slashSounds = [
+
+    new Audio("assets/audio/slash1.ogg"),
+    new Audio("assets/audio/slash2.ogg"),
+    new Audio("assets/audio/slash1.wav")
+
+];
+
+const hitSound =
+    new Audio("assets/sounds/hit.wav");
+
 function createTrail(x, y, color) {
 
     trailParticles.push({
