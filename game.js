@@ -15,6 +15,17 @@ const worldSize = 3000;
 // =========================
 
 const playerImage = new Image();
+playerImage.src = "assets/player.png";
+
+const enemyImages = [];
+
+for (let i = 1; i <= 3; i++) {
+    const img = new Image();
+    img.src = `assets/E${i}.png`;
+    enemyImages.push(img);
+}
+
+const playerImage = new Image();
 playerImage.src = "assets/AG.png";
 
 const player = {
@@ -79,10 +90,20 @@ function spawnBot() {
     bots.push({
         x: Math.random() * worldSize,
         y: Math.random() * worldSize,
+
         blades: Math.floor(Math.random() * 5) + 1,
+
         angle: 0,
+
         vx: (Math.random() - 0.5) * 2,
-        vy: (Math.random() - 0.5) * 2
+        vy: (Math.random() - 0.5) * 2,
+
+        radius: 35,
+
+        image:
+            enemyImages[
+                Math.floor(Math.random() * enemyImages.length)
+            ]
     });
 }
 
@@ -132,6 +153,61 @@ function update() {
     if (keys["arrowright"] || keys["d"]) player.x += player.speed;
 
     player.angle += 0.05;
+
+    // =========================
+    // BOT MOVEMENT
+    // =========================
+    bots.forEach((bot) => {
+
+        bot.x += bot.vx;
+        bot.y += bot.vy;
+
+        bot.angle += 0.03;
+
+        // Bounce off world edges
+        if (bot.x < 0 || bot.x > worldSize) {
+            bot.vx *= -1;
+        }
+
+        if (bot.y < 0 || bot.y > worldSize) {
+            bot.vy *= -1;
+        }
+    });
+
+    // =========================
+// PLAYER VS BOTS
+// =========================
+bots.forEach((bot, botIndex) => {
+
+    const dist = Math.hypot(
+        player.x - bot.x,
+        player.y - bot.y
+    );
+
+    // Player stronger
+    if (
+        dist < 60 &&
+        player.blades > bot.blades
+    ) {
+
+        player.blades += bot.blades;
+
+        bots.splice(botIndex, 1);
+
+        spawnBot();
+    }
+
+    // Enemy stronger
+    else if (
+        dist < 60 &&
+        bot.blades > player.blades
+    ) {
+
+        alert("GAME OVER");
+
+        location.reload();
+    }
+});
 
     // Bubble collision
     bubbles.forEach((bubble, index) => {
@@ -234,6 +310,55 @@ function draw() {
         ctx.fillStyle = "white";
         ctx.fillText(`LVL ${o.level}`, o.x - 15, o.y);
     });
+
+    // =========================
+// DRAW BOTS
+// =========================
+bots.forEach((bot) => {
+
+    const size = 70;
+
+    ctx.save();
+
+    ctx.beginPath();
+    ctx.arc(bot.x, bot.y, size / 2, 0, Math.PI * 2);
+    ctx.closePath();
+    ctx.clip();
+
+    ctx.drawImage(
+        bot.image,
+        bot.x - size / 2,
+        bot.y - size / 2,
+        size,
+        size
+    );
+
+    ctx.restore();
+
+    // Enemy blades
+    const orbitRadius = 60 + bot.blades * 2;
+
+    for (let i = 0; i < bot.blades; i++) {
+
+        const bladeAngle =
+            bot.angle +
+            (i * Math.PI * 2 / bot.blades);
+
+        const bx =
+            bot.x +
+            Math.cos(bladeAngle) * orbitRadius;
+
+        const by =
+            bot.y +
+            Math.sin(bladeAngle) * orbitRadius;
+
+        drawCrescent(
+            bx,
+            by,
+            bladeAngle + Math.PI / 2
+        );
+    }
+});
 
     // Draw Player Image
     const playerSize = 80;
