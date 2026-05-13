@@ -21,7 +21,25 @@ const slashSounds = [
 ];
 
 const hitSound =
-    new Audio("assets/sounds/hit.wav");
+    new Audio("assets/audio/hit.wav");
+
+function playSlashSound() {
+
+    const sound =
+        slashSounds[
+            Math.floor(
+                Math.random() *
+                slashSounds.length
+            )
+        ];
+
+    // Clone so sounds can overlap
+    const s = sound.cloneNode();
+
+    s.volume = 0.25;
+
+    s.play();
+}
 
 function createTrail(x, y, color) {
 
@@ -402,7 +420,10 @@ for (let botIndex = bots.length - 1; botIndex >= 0; botIndex--) {
             // Blade hit
             if (dist < 20) {
 
+                playSlashSound();
                 collisionHappened = true;
+
+                
 
                 createHitSparks(
                     (px + bx) / 2,
@@ -595,6 +616,10 @@ obstacles.forEach((obs, obsIndex) => {
 
         // Blade touches obstacle
         if (d < obs.size / 2 + 12) {
+
+            hitSound.currentTime = 0;
+            hitSound.volume = 0.2;
+            hitSound.play();
 
             // Minus obstacle number
             obs.value -= 1;
