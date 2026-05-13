@@ -258,6 +258,11 @@ function drawCrescent(x, y, rotation, swordData) {
     ctx.fillStyle = swordData.color;
     ctx.fill();
 
+    // Black border
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "rgba(0,0,0,0.7)";
+    ctx.stroke();
+
     ctx.restore();
 }
 
