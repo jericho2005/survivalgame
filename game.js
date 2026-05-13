@@ -417,7 +417,8 @@ function update() {
     if (keys["arrowleft"] || keys["a"]) player.x -= player.speed;
     if (keys["arrowright"] || keys["d"]) player.x += player.speed;
 
-    const playerSword = getSwordLevel(player.blades);
+    const playerSword =
+    getSwordLevel(getTotalBladePower());
 
     player.angle += playerSword.speed;
 
@@ -451,7 +452,7 @@ for (let botIndex = bots.length - 1; botIndex >= 0; botIndex--) {
     const bot = bots[botIndex];
 
     const playerOrbit =
-        60 + player.blades * 2;
+        60 + getTotalBladePower() * 2;
 
     const botOrbit =
         60 + bot.blades * 2;
@@ -465,7 +466,7 @@ for (let botIndex = bots.length - 1; botIndex >= 0; botIndex--) {
     let collisionHappened = false;
 
     // Player blades
-    for (let i = 0; i < player.blades; i++) {
+    for (let i = 0; i < getTotalBladePower(); i++) {
 
         const playerAngle =
             player.angle +
@@ -591,9 +592,9 @@ for (let botIndex = bots.length - 1; botIndex >= 0; botIndex--) {
 
     const bot = bots[botIndex];
 
-    const orbitRadius = 60 + player.blades * 2;
+    const orbitRadius = 60 + getTotalBladePower() * 2;
 
-    for (let i = 0; i < player.blades; i++) {
+    for (let i = 0; i < getTotalBladePower(); i++) {
 
         const bladeAngle =
             player.angle +
@@ -616,7 +617,7 @@ for (let botIndex = bots.length - 1; botIndex >= 0; botIndex--) {
         if (dist < bot.radius + 10) {
 
             // Stronger player wins
-            if (player.blades >= bot.blades) {
+            if (getTotalBladePower() >= bot.blades) {
 
                 player.blades += bot.blades;
 
@@ -680,9 +681,9 @@ bubbles.forEach((bubble, index) => {
 obstacles.forEach((obs, obsIndex) => {
 
     const orbitRadius =
-        60 + player.blades * 2;
+        60 + getTotalBladePower() * 2;
 
-    for (let i = 0; i < player.blades; i++) {
+    for (let i = 0; i < getTotalBladePower(); i++) {
 
         const bladeAngle =
             player.angle +
@@ -710,7 +711,7 @@ obstacles.forEach((obs, obsIndex) => {
             hitSound.play();
 
             // Minus obstacle number
-            obs.value -= sword.damage;
+            obs.value -= 1;
 
             createHitSparks(
                 bx,
@@ -1013,109 +1014,109 @@ bots.forEach((bot) => {
         ctx.stroke();
     });
 
-// =========================
-// DRAW ANIMATED PLAYER
-// =========================
+    // =========================
+    // DRAW ANIMATED PLAYER
+    // =========================
 
-function drawPlayerCharacter() {
+    function drawPlayerCharacter() {
 
-    const bodyBob =
-        Math.sin(Date.now() * 0.01) * 2;
+        const bodyBob =
+            Math.sin(Date.now() * 0.01) * 2;
 
-    const walkSwing =
-        Math.sin(Date.now() * 0.02) * 10;
+        const walkSwing =
+            Math.sin(Date.now() * 0.02) * 10;
 
-    // BODY
-    ctx.strokeStyle = "white";
-    ctx.lineWidth = 4;
+        // BODY
+        ctx.strokeStyle = "white";
+        ctx.lineWidth = 4;
 
-    // Body
-    ctx.beginPath();
+        // Body
+        ctx.beginPath();
 
-    ctx.moveTo(player.x, player.y + 20 + bodyBob);
-    ctx.lineTo(player.x, player.y + 55 + bodyBob);
+        ctx.moveTo(player.x, player.y + 20 + bodyBob);
+        ctx.lineTo(player.x, player.y + 55 + bodyBob);
 
-    ctx.stroke();
+        ctx.stroke();
 
-    // Arms
-    ctx.beginPath();
+        // Arms
+        ctx.beginPath();
 
-    ctx.moveTo(player.x - 15, player.y + 35 + bodyBob);
-    ctx.lineTo(player.x + 15, player.y + 35 + bodyBob);
+        ctx.moveTo(player.x - 15, player.y + 35 + bodyBob);
+        ctx.lineTo(player.x + 15, player.y + 35 + bodyBob);
 
-    ctx.stroke();
+        ctx.stroke();
 
-    // Left leg
-    ctx.beginPath();
+        // Left leg
+        ctx.beginPath();
 
-    ctx.moveTo(player.x, player.y + 55 + bodyBob);
+        ctx.moveTo(player.x, player.y + 55 + bodyBob);
 
-    ctx.lineTo(
-        player.x - 12,
-        player.y + 80 + walkSwing * 0.2 + bodyBob
-    );
+        ctx.lineTo(
+            player.x - 12,
+            player.y + 80 + walkSwing * 0.2 + bodyBob
+        );
 
-    ctx.stroke();
+        ctx.stroke();
 
-    // Right leg
-    ctx.beginPath();
+        // Right leg
+        ctx.beginPath();
 
-    ctx.moveTo(player.x, player.y + 55 + bodyBob);
+        ctx.moveTo(player.x, player.y + 55 + bodyBob);
 
-    ctx.lineTo(
-        player.x + 12,
-        player.y + 80 - walkSwing * 0.2 + bodyBob
-    );
+        ctx.lineTo(
+            player.x + 12,
+            player.y + 80 - walkSwing * 0.2 + bodyBob
+        );
 
-    ctx.stroke();
+        ctx.stroke();
 
-    // HEAD
-    const headSize = 42;
+        // HEAD
+        const headSize = 42;
 
-    ctx.save();
+        ctx.save();
 
-    ctx.beginPath();
+        ctx.beginPath();
 
-    ctx.arc(
-        player.x,
-        player.y,
-        headSize / 2,
-        0,
-        Math.PI * 2
-    );
+        ctx.arc(
+            player.x,
+            player.y,
+            headSize / 2,
+            0,
+            Math.PI * 2
+        );
 
-    ctx.closePath();
+        ctx.closePath();
 
-    ctx.clip();
+        ctx.clip();
 
-    ctx.drawImage(
-        playerImage,
-        player.x - headSize / 2,
-        player.y - headSize / 2,
-        headSize,
-        headSize
-    );
+        ctx.drawImage(
+            playerImage,
+            player.x - headSize / 2,
+            player.y - headSize / 2,
+            headSize,
+            headSize
+        );
 
-    ctx.restore();
+        ctx.restore();
 
-    // Head outline
-    ctx.beginPath();
+        // Head outline
+        ctx.beginPath();
 
-    ctx.arc(
-        player.x,
-        player.y,
-        headSize / 2,
-        0,
-        Math.PI * 2
-    );
+        ctx.arc(
+            player.x,
+            player.y,
+            headSize / 2,
+            0,
+            Math.PI * 2
+        );
 
-    ctx.strokeStyle = "#00ffcc";
-    ctx.lineWidth = 3;
+        ctx.strokeStyle = "#00ffcc";
+        ctx.lineWidth = 3;
 
-    ctx.stroke();
-}
+        ctx.stroke();
+    }
     drawPlayerCharacter();
-    
+}    
     // =========================
 // MULTI-RING BLADE SYSTEM
 // =========================
@@ -1189,4 +1190,3 @@ function resizeCanvas() {
 window.addEventListener("resize", resizeCanvas);
 
 resizeCanvas();
-}
