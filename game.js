@@ -974,16 +974,16 @@
             Math.hypot(bot.x - player.x, bot.y - player.y) < 5000
         );
 
-        // Respawn nearby objects
-        while (bubbles.length < 100) {
+        // Slowly respawn objects
+        if (bubbles.length < 100 && Math.random() < 0.2) {
             spawnBubble();
         }
 
-        while (obstacles.length < 60) {
+        if (obstacles.length < 60 && Math.random() < 0.05) {
             spawnObstacle();
         }
 
-        while (bots.length < 10) {
+        if (bots.length < 10 && Math.random() < 0.01) {
             spawnBot();
         }
 
