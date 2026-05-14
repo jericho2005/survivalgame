@@ -406,15 +406,15 @@
     function spawnBubble() {
 
         bubbles.push({
-            x: Math.random() * worldSize,
-            y: Math.random() * worldSize,
+
+            x: player.x + (Math.random() - 0.5) * 4000,
+            y: player.y + (Math.random() - 0.5) * 4000,
 
             value: Math.floor(Math.random() * 3) + 1,
 
             radius: 15
         });
     }
-
     function spawnObstacle() {
 
         const level =
@@ -425,8 +425,8 @@
             level * 10;
 
         obstacles.push({
-            x: Math.random() * worldSize,
-            y: Math.random() * worldSize,
+            x: player.x + (Math.random() - 0.5) * 4000,
+            y: player.y + (Math.random() - 0.5) * 4000,
 
             level,
             value,
@@ -438,8 +438,8 @@
     function spawnBot() {
 
         bots.push({
-            x: Math.random() * worldSize,
-            y: Math.random() * worldSize,
+            x: player.x + (Math.random() - 0.5) * 4000,
+            y: player.y + (Math.random() - 0.5) * 4000,
 
             blades: Math.floor(Math.random() * 5) + 1,
 
