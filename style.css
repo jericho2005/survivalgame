@@ -18,7 +18,22 @@ canvas {
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
+#menu{
+    position: fixed;
+    inset: 0;
 
+    background-image: url("assets/images/INTRO.png");
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 10;
+}
 
 #menu h1{
     font-size: 110px;
