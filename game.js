@@ -824,8 +824,6 @@
 
         obstacles.forEach((obs, obsIndex) => {
 
-            const orbitRadius =
-                120 + getTotalBladePower() * 2;
 
             let allBlades = [];
 
