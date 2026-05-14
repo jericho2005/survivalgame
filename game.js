@@ -828,50 +828,64 @@
             const orbitRadius =
                 120 + getTotalBladePower() * 2;
 
+            let allBlades = [];
+
+            // Gather all blades
             for (let level = 1; level <= 9; level++) {
 
                 const amount =
                     player.inventory[level] || 0;
-
-                if (amount <= 0) continue;
 
                 const sword =
                     swordLevels[level - 1];
 
                 for (let i = 0; i < amount; i++) {
 
-                    const bladeAngle =
-                        player.angle +
-                        (i * Math.PI * 2 / amount);
+                    allBlades.push(sword);
+                }
+            }
 
-                    const bx =
-                        player.x +
-                        Math.cos(bladeAngle) * orbitRadius;
+            // Shared orbit
+            const orbitRadius =
+                120 + allBlades.length * 2;
 
-                    const by =
-                        player.y +
-                        Math.sin(bladeAngle) * orbitRadius;
+            // Collision
+            for (let i = 0; i < allBlades.length; i++) {
 
-                    const dist =
-                        Math.hypot(
-                            bx - obs.x,
-                            by - obs.y
-                        );
+                const sword =
+                    allBlades[i];
 
-                    if (dist < obs.size / 2 + 12) {
+                const bladeAngle =
+                    player.angle +
+                    (i * Math.PI * 2 / allBlades.length);
 
-                        hitSound.currentTime = 0;
-                        hitSound.volume = 0.2;
-                        hitSound.play();
+                const bx =
+                    player.x +
+                    Math.cos(bladeAngle) * orbitRadius;
 
-                        obs.value--;
+                const by =
+                    player.y +
+                    Math.sin(bladeAngle) * orbitRadius;
 
-                        createHitSparks(
-                            bx,
-                            by,
-                            sword.color
-                        );
-                    }
+                const dist =
+                    Math.hypot(
+                        bx - obs.x,
+                        by - obs.y
+                    );
+
+                if (dist < obs.size / 2 + 12) {
+
+                    hitSound.currentTime = 0;
+                    hitSound.volume = 0.2;
+                    hitSound.play();
+
+                    obs.value--;
+
+                    createHitSparks(
+                        bx,
+                        by,
+                        sword.color
+                    );
                 }
             }
 
