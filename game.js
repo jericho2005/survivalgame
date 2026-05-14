@@ -12,7 +12,7 @@
     let hitSparks = [];
     let lightningEffects = [];
 
-    const worldSize = 3000;
+    
 
     // =========================
     // AUDIO
@@ -465,8 +465,8 @@
 
         resizeCanvas();
 
-        player.x = worldSize / 2;
-        player.y = worldSize / 2;
+        player.x = 0;
+        player.y = 0;
 
         player.inventory = {
             1: 1
