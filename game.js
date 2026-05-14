@@ -1462,3 +1462,38 @@
     window.addEventListener("resize", resizeCanvas);
 
     resizeCanvas();
+
+const upload =
+    document.getElementById(
+        "characterUpload"
+    );
+
+const uploadBtn =
+    document.getElementById(
+        "uploadBtn"
+    );
+
+const uploadStatus =
+    document.getElementById(
+        "uploadStatus"
+    );
+
+upload.addEventListener(
+    "change",
+    () => {
+
+        uploadBtn.classList.add(
+            "success"
+        );
+
+        uploadBtn.innerText =
+            "Photo Uploaded";
+
+        uploadStatus.innerText =
+            "UPLOAD COMPLETED";
+
+        uploadStatus.classList.add(
+            "show"
+        );
+    }
+);

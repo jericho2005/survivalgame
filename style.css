@@ -110,20 +110,53 @@ button:hover {
     background:
         linear-gradient(
             45deg,
-            #00c6ff,
-            #0072ff
+            #2196f3,
+            #1565c0
         );
 
-    box-shadow:
-        0 0 20px rgba(0,150,255,0.4);
-
     transition: 0.25s;
+
+    box-shadow:
+        0 0 20px rgba(33,150,243,0.4);
 }
 
 #uploadBtn:hover {
 
     transform: scale(1.05);
+}
+
+
+/* SUCCESS STATE */
+
+#uploadBtn.success {
+
+    background:
+        linear-gradient(
+            45deg,
+            #00c853,
+            #00e676
+        );
 
     box-shadow:
-        0 0 30px cyan;
+        0 0 25px rgba(0,255,100,0.5);
+}
+
+#uploadStatus {
+
+    margin-left: 15px;
+
+    font-size: 20px;
+
+    font-weight: bold;
+
+    color: #00ff99;
+
+    opacity: 0;
+
+    transition: 0.3s;
+}
+
+#uploadStatus.show {
+
+    opacity: 1;
 }
