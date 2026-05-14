@@ -172,7 +172,35 @@
     }
 
     const playerImage = new Image();
-    playerImage.src = "assets/images/CHARACTER.png";
+
+    // Default character
+    playerImage.src =
+        "assets/images/CHARACTER.png";
+
+    const characterUpload =
+    document.getElementById(
+        "characterUpload"
+    );
+
+    characterUpload.addEventListener(
+        "change",
+        (e) => {
+
+            const file = e.target.files[0];
+
+            if (!file) return;
+
+            const reader = new FileReader();
+
+            reader.onload = function(event) {
+
+                playerImage.src =
+                    event.target.result;
+            };
+
+            reader.readAsDataURL(file);
+        }
+    );
 
     // =========================
     // GAME OBJECTS

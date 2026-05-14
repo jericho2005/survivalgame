@@ -78,3 +78,12 @@ button {
 button:hover {
     opacity: 0.9;
 }
+
+#characterUpload {
+
+    margin-top: 20px;
+
+    color: white;
+
+    font-size: 18px;
+}
