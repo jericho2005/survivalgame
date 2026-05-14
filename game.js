@@ -828,10 +828,60 @@
     }
 
     // =========================
+    // SHADOW
+    // =========================
+
+    function drawShadow(x, y, radius, opacity = 0.25) {
+
+        const gradient = ctx.createRadialGradient(
+            x,
+            y,
+            radius * 0.2,
+            x,
+            y,
+            radius
+        );
+
+        gradient.addColorStop(
+            0,
+            `rgba(0,0,0,${opacity})`
+        );
+
+        gradient.addColorStop(
+            1,
+            "rgba(0,0,0,0)"
+        );
+
+        ctx.beginPath();
+
+        ctx.ellipse(
+            x,
+            y,
+            radius,
+            radius * 0.45,
+            0,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fillStyle = gradient;
+
+        ctx.fill();
+    }
+    
+    // =========================
     // DRAW PLAYER
     // =========================
 
     function drawPlayerCharacter() {
+
+        // Player shadow
+        drawShadow(
+            player.x,
+            player.y + 45,
+            35,
+            0.35
+        );
 
         const bodyBob =
             Math.sin(Date.now() * 0.01) * 2;
@@ -913,6 +963,12 @@
 
         // Bubbles
         bubbles.forEach((b) => {
+            drawShadow(
+                b.x,
+                b.y + 10,
+                b.radius,
+                0.15
+            );
 
             ctx.beginPath();
 
@@ -934,8 +990,14 @@
             ctx.fillText(b.value, b.x - 3, b.y + 3);
         });
 
-                // Obstacles
+        // Obstacles
         obstacles.forEach((o) => {
+            drawShadow(
+                o.x,
+                o.y + o.size * 0.35,
+                o.size * 0.6,
+                0.25
+            );
 
             ctx.fillStyle =
                 `hsl(${120 - o.level * 8}, 80%, 45%)`;
@@ -962,6 +1024,13 @@
 
         // Bots
         bots.forEach((bot) => {
+            // Bot shadow
+            drawShadow(
+                bot.x,
+                bot.y + 40,
+                35,
+                0.35
+            );
 
             const size = 70;
 
@@ -1010,6 +1079,13 @@
                 const by =
                     bot.y +
                     Math.sin(bladeAngle) * orbitRadius;
+
+                drawShadow(
+                    bx,
+                    by + 10,
+                    botSword.size * 1.2,
+                    0.2
+                );
 
                 drawCrescent(
                     bx,
@@ -1099,6 +1175,13 @@
             const by =
                 player.y +
                 Math.sin(bladeAngle) * orbitRadius;
+
+            drawShadow(
+                bx,
+                by + 10,
+                sword.size * 1.2,
+                0.2
+            );
 
             drawCrescent(
                 bx,
