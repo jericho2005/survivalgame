@@ -888,29 +888,123 @@
 
         function drawPlayerCharacter() {
 
-        const width = 120;
-        const height = 170;
+        const walkTime = Date.now() * 0.008;
+
+        // Detect movement
+        const moving =
+            keys["w"] ||
+            keys["a"] ||
+            keys["s"] ||
+            keys["d"] ||
+            keys["arrowup"] ||
+            keys["arrowdown"] ||
+            keys["arrowleft"] ||
+            keys["arrowright"];
+
+        // Walking animation
+        const legSwing = moving
+            ? Math.sin(walkTime) * 14
+            : 0;
+
+        const armSwing = moving
+            ? Math.sin(walkTime) * 10
+            : 0;
+
+        const bodyBob = moving
+            ? Math.sin(walkTime * 2) * 4
+            : Math.sin(walkTime) * 2;
+
+        // CHARACTER SIZE
+        const width = 170;
+        const height = 240;
 
         // Shadow
         drawShadow(
             player.x,
-            player.y + 70,
-            45,
-            0.3
+            player.y + 78,
+            55,
+            0.35
         );
 
-        // Floating animation
-        const bodyBob =
-            Math.sin(Date.now() * 0.01) * 3;
+        ctx.save();
 
-        // Draw FULL character image
+        ctx.translate(
+            player.x,
+            player.y + bodyBob
+        );
+
+        // =========================
+        // LEGS
+        // =========================
+
+        ctx.strokeStyle = "#1e3a8a";
+        ctx.lineWidth = 16;
+        ctx.lineCap = "round";
+
+        // Left leg
+        ctx.beginPath();
+        ctx.moveTo(-14, 42);
+
+        ctx.lineTo(
+            -14 + legSwing,
+            95
+        );
+
+        ctx.stroke();
+
+        // Right leg
+        ctx.beginPath();
+        ctx.moveTo(14, 42);
+
+        ctx.lineTo(
+            14 - legSwing,
+            95
+        );
+
+        ctx.stroke();
+
+        // =========================
+        // ARMS
+        // =========================
+
+        ctx.strokeStyle = "#f59e0b";
+        ctx.lineWidth = 14;
+
+        // Left arm
+        ctx.beginPath();
+        ctx.moveTo(-38, -8);
+
+        ctx.lineTo(
+            -60 - armSwing,
+            25
+        );
+
+        ctx.stroke();
+
+        // Right arm
+        ctx.beginPath();
+        ctx.moveTo(38, -8);
+
+        ctx.lineTo(
+            60 + armSwing,
+            25
+        );
+
+        ctx.stroke();
+
+        // =========================
+        // BODY IMAGE
+        // =========================
+
         ctx.drawImage(
             playerImage,
-            player.x - width / 2,
-            player.y - height / 2 + bodyBob,
+            -width / 2,
+            -height / 2,
             width,
             height
         );
+
+        ctx.restore();
     }
 
     // =========================
