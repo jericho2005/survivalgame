@@ -17,6 +17,8 @@
     // =========================
     // AUDIO
     // =========================
+    const screamSound = new Audio("assets/audio/scream.wav");
+    screamSound.volume = 1;
 
     const slashSounds = [
         new Audio("assets/audio/slash1.ogg"),
@@ -783,6 +785,8 @@
 
                         // BOT DEAD
                         if (bot.blades <= 0) {
+                            screamSound.currentTime = 0;
+                            screamSound.play();
 
                             createLightning(
                                 player.x,
@@ -797,6 +801,7 @@
                             spawnBot();
 
                             botDead = true;
+                            
                         }
 
                         // PLAYER DEAD
