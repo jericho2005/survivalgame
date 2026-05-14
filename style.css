@@ -87,3 +87,43 @@ button:hover {
 
     font-size: 18px;
 }
+
+#uploadBtn {
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 260px;
+    height: 65px;
+
+    border-radius: 18px;
+
+    font-size: 24px;
+    font-weight: bold;
+
+    color: white;
+
+    cursor: pointer;
+
+    background:
+        linear-gradient(
+            45deg,
+            #00c6ff,
+            #0072ff
+        );
+
+    box-shadow:
+        0 0 20px rgba(0,150,255,0.4);
+
+    transition: 0.25s;
+}
+
+#uploadBtn:hover {
+
+    transform: scale(1.05);
+
+    box-shadow:
+        0 0 30px cyan;
+}
