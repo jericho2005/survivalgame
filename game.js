@@ -143,6 +143,12 @@
     };
 
     // =========================
+    // BACKGROUND
+    // =========================
+
+    const grassBg = new Image();
+    grassBg.src = "assets/images/FIELD.jpg";
+    // =========================
     // IMAGES
     // =========================
 
@@ -900,21 +906,10 @@
 
         ctx.translate(-player.x, -player.y);
 
-        // Grid
-        ctx.strokeStyle = "#333";
-
-        for (let i = 0; i <= worldSize; i += 100) {
-
-            ctx.beginPath();
-            ctx.moveTo(i, 0);
-            ctx.lineTo(i, worldSize);
-            ctx.stroke();
-
-            ctx.beginPath();
-            ctx.moveTo(0, i);
-            ctx.lineTo(worldSize, i);
-            ctx.stroke();
-        }
+        // Background field
+        const grassPattern = ctx.createPattern(grassBg, "repeat");
+        ctx.fillStyle = grassPattern;
+        ctx.fillRect(1024, 1024, worldSize, worldSize);
 
         // Bubbles
         bubbles.forEach((b) => {
