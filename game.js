@@ -145,9 +145,20 @@
     // =========================
     // BACKGROUND
     // =========================
-
     const grassBg = new Image();
+
     grassBg.src = "assets/images/FIELD.jpg";
+
+    let grassPattern = null;
+
+    grassBg.onload = () => {
+
+        grassPattern = ctx.createPattern(
+            grassBg,
+            "repeat"
+        );
+    };
+
     // =========================
     // IMAGES
     // =========================
@@ -461,6 +472,8 @@
         if (!gameRunning) return;
 
         // Movement
+        player.x = Math.max(0, Math.min(worldSize, player.x));
+        player.y = Math.max(0, Math.min(worldSize, player.y));
         if (keys["arrowup"] || keys["w"]) player.y -= player.speed;
         if (keys["arrowdown"] || keys["s"]) player.y += player.speed;
         if (keys["arrowleft"] || keys["a"]) player.x -= player.speed;
@@ -955,11 +968,24 @@
         ctx.scale(zoom, zoom);
 
         ctx.translate(-player.x, -player.y);
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
 
-        // Background field
-        const grassPattern = ctx.createPattern(grassBg, "repeat");
-        ctx.fillStyle = grassPattern;
-        ctx.fillRect(1024, 1024, worldSize, worldSize);
+        // =========================
+        // BACKGROUND FIELD
+        // =========================
+
+        if (grassPattern) {
+
+            ctx.fillStyle = grassPattern;
+
+            ctx.fillRect(
+                -10000,
+                -10000,
+                20000,
+                20000
+            );
+        }
 
         // Bubbles
         bubbles.forEach((b) => {
