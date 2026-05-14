@@ -427,11 +427,9 @@
         obstacles.push({
             x: Math.random() * worldSize,
             y: Math.random() * worldSize,
-
-            level,
-            value,
-
-            size: 35 + value * 0.08
+            type: "chest",
+            value: Math.floor(Math.random() * 20) + 5,
+            opened: false
         });
     }
 
