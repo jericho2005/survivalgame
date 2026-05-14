@@ -585,8 +585,7 @@
         if (!gameRunning) return;
 
         // Movement
-        player.x = Math.max(0, Math.min(worldSize, player.x));
-        player.y = Math.max(0, Math.min(worldSize, player.y));
+        
         if (keys["arrowup"] || keys["w"]) player.y -= player.speed;
         if (keys["arrowdown"] || keys["s"]) player.y += player.speed;
         if (keys["arrowleft"] || keys["a"]) player.x -= player.speed;
