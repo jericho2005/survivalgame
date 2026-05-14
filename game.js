@@ -604,13 +604,13 @@
 
             bot.angle += 0.03;
 
-            if (bot.x < 0 || bot.x > worldSize) {
-                bot.vx *= -1;
-            }
+            bots.forEach((bot) => {
 
-            if (bot.y < 0 || bot.y > worldSize) {
-                bot.vy *= -1;
-            }
+                bot.x += bot.vx;
+                bot.y += bot.vy;
+
+                bot.angle += 0.03;
+            });
         });
 
         // =========================
@@ -959,6 +959,40 @@
             }
         });
 
+        // Remove far bubbles
+        bubbles = bubbles.filter(b =>
+            Math.hypot(b.x - player.x, b.y - player.y) < 5000
+        );
+
+        // Remove far obstacles
+        obstacles = obstacles.filter(o =>
+            Math.hypot(o.x - player.x, o.y - player.y) < 5000
+        );
+
+        // Remove far bots
+        bots = bots.filter(bot =>
+            Math.hypot(bot.x - player.x, bot.y - player.y) < 5000
+        );
+
+        // Respawn nearby objects
+        while (bubbles.length < 100) {
+            spawnBubble();
+        }
+
+        while (obstacles.length < 60) {
+            spawnObstacle();
+        }
+
+        while (bots.length < 10) {
+            spawnBot();
+        }
+
+        scoreEl.innerText =
+            `Power: ${getTotalBladePower()}`;
+
+        draw();
+
+        animationId = requestAnimationFrame(update);
         scoreEl.innerText =
             `Power: ${getTotalBladePower()}`;
 
@@ -1078,6 +1112,21 @@
         );
 
         ctx.restore();
+
+        // Keep bubbles around player
+        while (bubbles.length < 100) {
+            spawnBubble();
+        }
+
+        // Keep obstacles around player
+        while (obstacles.length < 60) {
+            spawnObstacle();
+        }
+
+        // Keep bots around player
+        while (bots.length < 10) {
+            spawnBot();
+        }
     }
 
     // =========================
@@ -1120,10 +1169,10 @@
             ctx.fillStyle = grassPattern;
 
             ctx.fillRect(
-                -10000,
-                -10000,
-                20000,
-                20000
+                -1000000,
+                -1000000,
+                2000000,
+                2000000
             );
         }
 
