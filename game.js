@@ -1497,3 +1497,31 @@ upload.addEventListener(
         );
     }
 );
+
+let touchX = null;
+let touchY = null;
+
+window.addEventListener("touchstart", (e) => {
+
+    touchX = e.touches[0].clientX;
+    touchY = e.touches[0].clientY;
+});
+
+window.addEventListener("touchmove", (e) => {
+
+    const x = e.touches[0].clientX;
+    const y = e.touches[0].clientY;
+
+    const dx = x - touchX;
+    const dy = y - touchY;
+
+    player.x += dx * 0.5;
+    player.y += dy * 0.5;
+
+    touchX = x;
+    touchY = y;
+});
+
+document.addEventListener("touchmove", (e) => {
+    e.preventDefault();
+}, { passive: false });
