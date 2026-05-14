@@ -172,7 +172,7 @@
     }
 
     const playerImage = new Image();
-    playerImage.src = "assets/images/AG.png";
+    playerImage.src = "assets/images/CHARACTER.png";
 
     // =========================
     // GAME OBJECTS
@@ -886,58 +886,31 @@
     // DRAW PLAYER
     // =========================
 
-    function drawPlayerCharacter() {
+        function drawPlayerCharacter() {
 
-        // Player shadow
+        const width = 120;
+        const height = 170;
+
+        // Shadow
         drawShadow(
             player.x,
-            player.y + 45,
-            35,
-            0.35
+            player.y + 70,
+            45,
+            0.3
         );
 
+        // Floating animation
         const bodyBob =
-            Math.sin(Date.now() * 0.01) * 2;
+            Math.sin(Date.now() * 0.01) * 3;
 
-        ctx.strokeStyle = "white";
-        ctx.lineWidth = 4;
-
-        // Body
-        ctx.beginPath();
-
-        ctx.moveTo(player.x, player.y + 20 + bodyBob);
-        ctx.lineTo(player.x, player.y + 55 + bodyBob);
-
-        ctx.stroke();
-
-        // Head
-        const headSize = 42;
-
-        ctx.save();
-
-        ctx.beginPath();
-
-        ctx.arc(
-            player.x,
-            player.y,
-            headSize / 2,
-            0,
-            Math.PI * 2
-        );
-
-        ctx.closePath();
-
-        ctx.clip();
-
+        // Draw FULL character image
         ctx.drawImage(
             playerImage,
-            player.x - headSize / 2,
-            player.y - headSize / 2,
-            headSize,
-            headSize
+            player.x - width / 2,
+            player.y - height / 2 + bodyBob,
+            width,
+            height
         );
-
-        ctx.restore();
     }
 
     // =========================
