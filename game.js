@@ -347,6 +347,9 @@
     // =========================
 
     function createTrail(x, y, color) {
+        if (trailParticles.length > 200) {
+            trailParticles.shift();
+        }
 
         trailParticles.push({
             x,
@@ -365,6 +368,9 @@
     }
 
     function createHitSparks(x, y, color) {
+        if (hitSparks.length > 300) {
+            hitSparks.splice(0, 15);
+        }
 
         for (let i = 0; i < 15; i++) {
 
@@ -386,6 +392,9 @@
     }
 
     function createLightning(x1, y1, x2, y2, color) {
+        if (lightningEffects.length > 50) {
+            lightningEffects.shift();
+        }
 
         lightningEffects.push({
             x1,
@@ -478,9 +487,9 @@
         obstacles = [];
         bots = [];
 
-        for (let i = 0; i < 100; i++) spawnBubble();
-        for (let i = 0; i < 60; i++) spawnObstacle();
-        for (let i = 0; i < 10; i++) spawnBot();
+        for (let i = 0; i < 40; i++) spawnBubble();
+        for (let i = 0; i < 25; i++) spawnObstacle();
+        for (let i = 0; i < 5; i++) spawnBot();
     }
 
     // =========================
@@ -542,7 +551,7 @@
         const offsetX = swordData.size * 1.1;
 
         ctx.shadowColor = swordData.color;
-        ctx.shadowBlur = 6;
+        ctx.shadowBlur = 2;
 
         ctx.beginPath();
 
@@ -603,14 +612,6 @@
             bot.y += bot.vy;
 
             bot.angle += 0.03;
-
-            bots.forEach((bot) => {
-
-                bot.x += bot.vx;
-                bot.y += bot.vy;
-
-                bot.angle += 0.03;
-            });
         });
 
         // =========================
@@ -1107,20 +1108,6 @@
 
         ctx.restore();
 
-        // Keep bubbles around player
-        while (bubbles.length < 100) {
-            spawnBubble();
-        }
-
-        // Keep obstacles around player
-        while (obstacles.length < 60) {
-            spawnObstacle();
-        }
-
-        // Keep bots around player
-        while (bots.length < 10) {
-            spawnBot();
-        }
     }
 
     // =========================
@@ -1312,7 +1299,7 @@
 
             ctx.lineWidth = 3;
 
-            ctx.shadowBlur = 8;
+            ctx.shadowBlur = 2;
             ctx.shadowColor = l.color;
 
             ctx.beginPath();
@@ -1347,6 +1334,7 @@
         // =========================
 
         let allBlades = [];
+        const MAX_BLADES_RENDER = 40;
 
         // Gather all blades from inventory
         for (let level = 1; level <= 9; level++) {
@@ -1362,6 +1350,7 @@
                 allBlades.push(sword);
             }
         }
+        allBlades = allBlades.slice(0, MAX_BLADES_RENDER);
 
         // One shared orbit
         const orbitRadius =
@@ -1400,7 +1389,7 @@
             );
 
             // Trail effect
-            if (Math.random() < 0.15) {
+            if (Math.random() < 0.03) {
 
                 createTrail(
                     bx,
@@ -1574,8 +1563,8 @@ window.addEventListener("touchmove", (e) => {
     const dx = x - touchX;
     const dy = y - touchY;
 
-    player.x += dx * 0.5;
-    player.y += dy * 0.5;
+    player.x += dx * 0.2;
+    player.y += dy * 0.2;
 
     touchX = x;
     touchY = y;
