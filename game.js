@@ -861,7 +861,9 @@
                         hitSound.volume = 0.2;
                         hitSound.play();
 
-                        obs.value--;
+                        obs.opened = true;
+                        player.inventory[1] += obs.value;
+                        mergeBlades();
 
                         createHitSparks(
                             bx,
@@ -873,7 +875,7 @@
             }
 
             // Destroy obstacle
-            if (obs.value <= 0) {
+            if (obs.opened) {
 
                 createLightning(
                     player.x,
@@ -1155,12 +1157,17 @@
             ctx.fillStyle =
                 `hsl(${120 - o.level * 8}, 80%, 45%)`;
 
-            ctx.fillRect(
-                o.x - o.size / 2,
-                o.y - o.size / 2,
-                o.size,
-                o.size
-            );
+            // CHEST BASE
+            ctx.fillStyle = "#8B4513";
+            ctx.fillRect(o.x - 20, o.y - 15, 40, 30);
+
+            // CHEST TOP
+            ctx.fillStyle = "#A0522D";
+            ctx.fillRect(o.x - 22, o.y - 25, 44, 15);
+
+            // GOLD LOCK
+            ctx.fillStyle = "gold";
+            ctx.fillRect(o.x - 5, o.y - 5, 10, 10);
 
             ctx.fillStyle = "white";
 
