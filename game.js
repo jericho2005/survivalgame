@@ -23,7 +23,7 @@
     const slashSounds = [
         new Audio("assets/audio/slash1.ogg"),
         new Audio("assets/audio/slash2.ogg"),
-        new Audio("assets/audio/slash1.wav")
+        new Audio("assets/audio/slash3.wav")
     ];
 
     const hitSound = new Audio("assets/audio/hit.wav");
