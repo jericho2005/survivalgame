@@ -430,7 +430,7 @@
 
             level,
             value,
-            type = "chest",
+            type: "chest",
 
             size: 35 + value * 0.08
         });
