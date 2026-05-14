@@ -182,25 +182,108 @@
         "characterUpload"
     );
 
+    let bodyPixNet = null;
+
+    // Load AI model
+    async function loadBodyPix() {
+
+        bodyPixNet = await bodyPix.load({
+            architecture: "MobileNetV1",
+            outputStride: 16,
+            multiplier: 0.75,
+            quantBytes: 2
+        });
+
+        console.log("BodyPix Loaded");
+    }
+
+    loadBodyPix();
+
     characterUpload.addEventListener(
         "change",
-        (e) => {
+        async (e) => {
 
             const file = e.target.files[0];
 
             if (!file) return;
 
-            const reader = new FileReader();
+            const uploadedImg = new Image();
 
-            reader.onload = function(event) {
+            uploadedImg.src = URL.createObjectURL(file);
 
-                playerImage.src =
-                    event.target.result;
+            uploadedImg.onload = async () => {
+
+                // Create temp canvas
+                const tempCanvas =
+                    document.createElement("canvas");
+
+                const tempCtx =
+                    tempCanvas.getContext("2d");
+
+                tempCanvas.width =
+                    uploadedImg.width;
+
+                tempCanvas.height =
+                    uploadedImg.height;
+
+                // Draw uploaded image
+                tempCtx.drawImage(
+                    uploadedImg,
+                    0,
+                    0
+                );
+
+                // AI segmentation
+                const segmentation =
+                    await bodyPixNet.segmentPerson(
+                        uploadedImg,
+                        {
+                            internalResolution: "medium",
+                            segmentationThreshold: 0.7
+                        }
+                    );
+
+            const imageData =
+                tempCtx.getImageData(
+                    0,
+                    0,
+                    tempCanvas.width,
+                    tempCanvas.height
+                );
+
+            const data = imageData.data;
+
+            // Remove background
+            for (
+                let i = 0;
+                i < segmentation.data.length;
+                i++
+            ) {
+
+                const n = i * 4;
+
+                // Background pixels
+                if (segmentation.data[i] === 0) {
+
+                    // Make transparent
+                    data[n + 3] = 0;
+                }
+            }
+
+            tempCtx.putImageData(
+                imageData,
+                0,
+                0
+            );
+
+            // Convert canvas into PNG
+            playerImage.src =
+                tempCanvas.toDataURL(
+                    "image/png"
+                );
             };
-
-            reader.readAsDataURL(file);
-        }
-    );
+            }
+            );
 
     // =========================
     // GAME OBJECTS
@@ -914,7 +997,7 @@
     // DRAW PLAYER
     // =========================
 
-    function drawPlayerCharacter() {
+        function drawPlayerCharacter() {
 
         const moving =
             keys["w"] ||
@@ -928,10 +1011,7 @@
 
         const t = Date.now() * 0.01;
 
-        // =========================
-        // WALKING ANIMATION
-        // =========================
-
+        // Walking animation
         const bob = moving
             ? Math.sin(t * 1.8) * 6
             : Math.sin(t) * 2;
@@ -948,16 +1028,8 @@
             ? 1 - Math.sin(t * 2) * 0.03
             : 1;
 
-        // =========================
-        // CHARACTER SIZE
-        // =========================
-
-        const width = 170;
-        const height = 220;
-
-        // =========================
-        // SHADOW
-        // =========================
+        const width = 190;
+        const height = 250;
 
         drawShadow(
             player.x,
@@ -965,10 +1037,6 @@
             55,
             0.35
         );
-
-        // =========================
-        // DRAW CHARACTER
-        // =========================
 
         ctx.save();
 
@@ -979,8 +1047,12 @@
 
         ctx.rotate(sway);
 
-        ctx.scale(squashX, squashY);
+        ctx.scale(
+            squashX,
+            squashY
+        );
 
+        // Center image nicely
         ctx.drawImage(
             playerImage,
             -width / 2,
