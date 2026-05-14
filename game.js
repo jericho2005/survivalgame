@@ -54,7 +54,7 @@
 
         {
             level: 2,
-            color: "#d8f3ff",
+            color: "#EE82EE",
             size: 12,
             damage: 2,
             speed: 0.06,
@@ -63,7 +63,7 @@
 
         {
             level: 3,
-            color: "#9be7ff",
+            color: "#F0E68C",
             size: 14,
             damage: 4,
             speed: 0.07,
@@ -72,7 +72,7 @@
 
         {
             level: 4,
-            color: "#5ab8ff",
+            color: "#FF7F50",
             size: 16,
             damage: 7,
             speed: 0.08,
@@ -81,7 +81,7 @@
 
         {
             level: 5,
-            color: "#2d7dff",
+            color: "#FFFF00",
             size: 18,
             damage: 11,
             speed: 0.09,
@@ -90,7 +90,7 @@
 
         {
             level: 6,
-            color: "#4b3dff",
+            color: "#FF4500",
             size: 21,
             damage: 16,
             speed: 0.10,
@@ -99,7 +99,7 @@
 
         {
             level: 7,
-            color: "#3a1b7a",
+            color: "#4682B4",
             size: 24,
             damage: 23,
             speed: 0.15,
@@ -108,7 +108,7 @@
 
         {
             level: 8,
-            color: "#240046",
+            color: "#00FF00",
             size: 28,
             damage: 32,
             speed: 0.25,
@@ -117,7 +117,7 @@
 
         {
             level: 9,
-            color: "#14001f",
+            color: "#FF0000",
             size: 18,
             damage: 50,
             speed: 0.30,
