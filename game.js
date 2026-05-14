@@ -993,12 +993,6 @@
         draw();
 
         animationId = requestAnimationFrame(update);
-        scoreEl.innerText =
-            `Power: ${getTotalBladePower()}`;
-
-        draw();
-
-        animationId = requestAnimationFrame(update);
     }
 
     // =========================
