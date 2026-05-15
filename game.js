@@ -1219,35 +1219,35 @@
             ctx.fillText(b.value, b.x - 3, b.y + 3);
         });
 
-        // Obstacles
+        // Obstacles as Treasure Chests
         obstacles.forEach((o) => {
+
             drawShadow(
                 o.x,
-                o.y + o.size * 0.35,
-                o.size * 0.6,
-                0.25
+                o.y + o.size * 0.4,
+                o.size * 0.7,
+                0.3
             );
 
-            ctx.fillStyle =
-                `hsl(${120 - o.level * 8}, 80%, 45%)`;
-
-            ctx.fillRect(
+            ctx.drawImage(
+                chestImage,
                 o.x - o.size / 2,
                 o.y - o.size / 2,
                 o.size,
                 o.size
             );
 
+            // Chest HP text
             ctx.fillStyle = "white";
 
-            ctx.font = "bold 20px Arial";
+            ctx.font = "bold 18px Arial";
 
             ctx.textAlign = "center";
 
             ctx.fillText(
                 o.value,
                 o.x,
-                o.y + 6
+                o.y - o.size / 2 - 10
             );
         });
 
