@@ -14,28 +14,75 @@
         <h2 id="score">Blades: 1</h2>
     </div>
 
-    <div id="menu">
+            <div id="menu">
 
-        <h1>BEHHLHAT BLADES</h1>
+            <h1>BEHHLHAT BLADES</h1>
 
-        <label for="characterUpload" id="uploadBtn">
-            Upload Photo
-        </label>
+            <label for="characterUpload" id="uploadBtn">
+                Upload Photo
+            </label>
 
-        <span id="uploadStatus"></span>
+            <span id="uploadStatus"></span>
 
-        <input
-            type="file"
-            id="characterUpload"
-            accept="image/*"
-            hidden
-        >
+            <input
+                type="file"
+                id="characterUpload"
+                accept="image/*"
+                hidden
+            >
 
-        <button id="startBtn">
-            Start Game
-        </button>
+            <button id="startBtn">
+                Start Game
+            </button>
 
-    </div>
+            <!-- SETTINGS BUTTON -->
+            <button id="settingsBtn">
+                Settings
+            </button>
+
+            <!-- SETTINGS PANEL -->
+            <div id="settingsPanel">
+
+                <h2>GAME SETTINGS</h2>
+
+                <!-- SOUND -->
+                <div class="setting-item">
+
+                    <span>Sound</span>
+
+                    <button id="soundToggle">
+                        ON
+                    </button>
+
+                </div>
+
+                <!-- JOYSTICK -->
+                <div class="setting-item">
+
+                    <span>Joystick</span>
+
+                    <button id="joystickToggle">
+                        OFF
+                    </button>
+
+                </div>
+
+                <!-- BUTTONS -->
+                <div class="settings-buttons">
+
+                    <button id="confirmSettings">
+                        CONFIRM
+                    </button>
+
+                    <button id="cancelSettings">
+                        CANCEL
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
 
     <canvas id="gameCanvas"></canvas>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>

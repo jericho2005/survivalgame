@@ -4,6 +4,20 @@
     const scoreEl = document.getElementById("score");
     const menu = document.getElementById("menu");
     const startBtn = document.getElementById("startBtn");
+    const settingsBtn =
+    document.getElementById("settingsBtn");
+
+    const settingsPanel =
+        document.getElementById("settingsPanel");
+
+    const closeSettings =
+        document.getElementById("closeSettings");
+
+    const soundToggle =
+        document.getElementById("soundToggle");
+
+    const joystickToggle =
+        document.getElementById("joystickToggle");
 
     let animationId;
     let gameRunning = false;
@@ -11,7 +25,14 @@
     let trailParticles = [];
     let hitSparks = [];
     let lightningEffects = [];
+    let soundEnabled = true;
+    let joystickEnabled = false;
+    if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
 
+        joystickEnabled = true;
+
+        joystickToggle.innerText = "ON";
+    }
     
 
     // =========================
@@ -37,7 +58,9 @@
         const s = sound.cloneNode();
 
         s.volume = 1;
-        s.play();
+        if (soundEnabled) {
+            s.play();
+        }
     }
 
     // =========================
@@ -786,7 +809,9 @@
                         // BOT DEAD
                         if (bot.blades <= 0) {
                             screamSound.currentTime = 0;
-                            screamSound.play();
+                            if (soundEnabled) {
+                                s.play();
+                            }
 
                             createLightning(
                                 player.x,
@@ -874,7 +899,9 @@
 
                     hitSound.currentTime = 0;
                     hitSound.volume = 0.2;
-                    hitSound.play();
+                    if (soundEnabled) {
+                        s.play();
+                    }
 
                     obs.value--;
 
@@ -1556,6 +1583,7 @@ window.addEventListener("touchstart", (e) => {
 });
 
 window.addEventListener("touchmove", (e) => {
+    if (!joystickEnabled) return;
 
     const x = e.touches[0].clientX;
     const y = e.touches[0].clientY;
@@ -1573,3 +1601,29 @@ window.addEventListener("touchmove", (e) => {
 document.addEventListener("touchmove", (e) => {
     e.preventDefault();
 }, { passive: false });
+
+settingsBtn.addEventListener("click", () => {
+
+    settingsPanel.style.display = "block";
+});
+
+closeSettings.addEventListener("click", () => {
+
+    settingsPanel.style.display = "none";
+});
+
+soundToggle.addEventListener("click", () => {
+
+    soundEnabled = !soundEnabled;
+
+    soundToggle.innerText =
+        soundEnabled ? "ON" : "OFF";
+});
+
+joystickToggle.addEventListener("click", () => {
+
+    joystickEnabled = !joystickEnabled;
+
+    joystickToggle.innerText =
+        joystickEnabled ? "ON" : "OFF";
+});

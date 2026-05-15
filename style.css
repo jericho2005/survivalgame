@@ -179,3 +179,78 @@ canvas {
 
     touch-action: none;
 }
+
+/* =========================
+   SETTINGS BUTTON
+========================= */
+
+#settingsBtn{
+    margin-top: 15px;
+}
+
+/* =========================
+   SETTINGS PANEL
+========================= */
+
+#settingsPanel{
+    display: none;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    width: 320px;
+
+    padding: 25px;
+
+    border-radius: 20px;
+
+    background: rgba(0,0,0,0.8);
+
+    border: 2px solid cyan;
+
+    box-shadow:
+    0 0 20px cyan;
+
+    z-index: 9999;
+
+    text-align: center;
+}
+
+#settingsPanel h2{
+    margin-bottom: 20px;
+    color: cyan;
+}
+
+.setting-item{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 20px;
+}
+
+.setting-item span{
+    font-size: 18px;
+}
+
+.setting-item button,
+#closeSettings{
+    padding: 10px 20px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: cyan;
+    color: black;
+
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.setting-item button:hover,
+#closeSettings:hover{
+    transform: scale(1.05);
+}
