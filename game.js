@@ -1445,6 +1445,8 @@
 
         gameRunning = false;
 
+        joystick.style.display = "none";
+
         cancelAnimationFrame(animationId);
 
         // Dark overlay
@@ -1522,6 +1524,10 @@
         menu.style.display = "none";
 
         gameRunning = true;
+
+        if (joystickEnabled) {
+            joystick.style.display = "block";
+        }
 
         init();
 
@@ -1673,7 +1679,14 @@ joystickToggle.addEventListener("click", () => {
 
     joystickEnabled = !joystickEnabled;
 
-    updateJoystickUI();
+    joystickToggle.innerText =
+        joystickEnabled ? "ON" : "OFF";
+
+    if (gameRunning) {
+
+        joystick.style.display =
+            joystickEnabled ? "block" : "none";
+    }
 });
 
 const confirmSettings =
