@@ -38,6 +38,10 @@
     // =========================
     // AUDIO
     // =========================
+    const pickupSound =
+    new Audio("assets/audio/bubble.mp3");
+
+    pickupSound.volume = 0.4;
     const screamSound = new Audio("assets/audio/scream.wav");
     screamSound.volume = 1;
 
@@ -945,6 +949,15 @@
             );
 
             if (dist < player.radius + bubble.radius) {
+
+                if (soundEnabled) {
+
+                    const s = pickupSound.cloneNode();
+
+                    s.volume = 0.4;
+
+                    s.play();
+                }
 
                 player.inventory[1] += bubble.value;
 
