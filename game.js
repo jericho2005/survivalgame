@@ -483,28 +483,29 @@
         });
     }
 
+    function spawnBoss() {
+
+        bosses.push({
+
+            x: player.x + (Math.random() - 0.5) * 6000,
+            y: player.y + (Math.random() - 0.5) * 6000,
+
+            radius: 120,
+
+            hp: 500,
+            maxHp: 500,
+
+            blades: 25,
+
+            angle: 0,
+
+            speed: 1.2,
+
+               color: "#ff0000"
+        });
+    }
+
     function spawnBot() {
-        function spawnBoss() {
-
-            bosses.push({
-
-                x: player.x + (Math.random() - 0.5) * 6000,
-                y: player.y + (Math.random() - 0.5) * 6000,
-
-                radius: 120,
-
-                hp: 500,
-                maxHp: 500,
-
-                blades: 25,
-
-                angle: 0,
-
-                speed: 1.2,
-
-                color: "#ff0000"
-            });
-        }
 
         bots.push({
             x: player.x + (Math.random() - 0.5) * 4000,
