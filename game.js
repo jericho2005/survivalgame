@@ -43,7 +43,7 @@
 
     pickupSound.volume = 1;
 
-    const screamSound = new Audio("assets/audio/yuh.mp3");
+    const screamSound = new Audio("assets/audio/scream.wav");
     screamSound.volume = 1;
 
     const slashSounds = [
