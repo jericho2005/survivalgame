@@ -505,6 +505,7 @@
         });
     }
 
+    
     function spawnBot() {
 
         bots.push({
