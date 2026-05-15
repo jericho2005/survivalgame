@@ -397,8 +397,9 @@ canvas {
 
 #joystick{
     position: fixed;
-    bottom: 40px;
-    left: 40px;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
 
     width: 140px;
     height: 140px;
