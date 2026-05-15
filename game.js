@@ -10,8 +10,8 @@
     const settingsPanel =
         document.getElementById("settingsPanel");
 
-    const closeSettings =
-        document.getElementById("closeSettings");
+    const cancelSettings =
+        document.getElementById("cancelSettings");
 
     const soundToggle =
         document.getElementById("soundToggle");
@@ -1604,10 +1604,10 @@ document.addEventListener("touchmove", (e) => {
 
 settingsBtn.addEventListener("click", () => {
 
-    settingsPanel.style.display = "block";
+    settingsPanel.style.display = "flex";
 });
 
-closeSettings.addEventListener("click", () => {
+cancelSettings.addEventListener("click", () => {
 
     settingsPanel.style.display = "none";
 });
@@ -1626,4 +1626,12 @@ joystickToggle.addEventListener("click", () => {
 
     joystickToggle.innerText =
         joystickEnabled ? "ON" : "OFF";
+});
+
+const confirmSettings =
+    document.getElementById("confirmSettings");
+
+confirmSettings.addEventListener("click", () => {
+
+    settingsPanel.style.display = "none";
 });

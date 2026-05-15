@@ -254,3 +254,143 @@ canvas {
 #closeSettings:hover{
     transform: scale(1.05);
 }
+
+#settingsPanel{
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    width: 320px;
+
+    background:
+    rgba(15,15,25,0.97);
+
+    border:
+    2px solid #00ffee;
+
+    border-radius: 22px;
+
+    padding: 25px;
+
+    display: none;
+
+    flex-direction: column;
+
+    gap: 22px;
+
+    z-index: 999;
+
+    box-shadow:
+    0 0 25px #00ffee;
+}
+
+#settingsPanel h2{
+    color: #00ffee;
+
+    text-align: center;
+
+    font-size: 32px;
+
+    margin: 0;
+
+    text-shadow:
+    0 0 15px #00ffee;
+}
+
+.setting-item{
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    font-size: 22px;
+
+    font-weight: bold;
+
+    color: white;
+}
+
+.setting-item span{
+    color: #ffffff;
+
+    text-shadow:
+    0 0 10px #00ffee;
+}
+
+#settingsPanel button{
+    background: #00ffee;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 12px;
+
+    padding: 10px 18px;
+
+    font-size: 18px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+
+    box-shadow:
+    0 0 12px #00ffee;
+}
+
+#settingsPanel button:hover{
+    transform: scale(1.05);
+
+    box-shadow:
+    0 0 20px #00ffee;
+}
+
+.settings-buttons{
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 15px;
+}
+
+#confirmSettings{
+    flex: 1;
+
+    background: #00ff99;
+}
+
+#cancelSettings{
+    flex: 1;
+
+    background: #ff3366;
+}
+
+#settingsBtn{
+    margin-top: 15px;
+
+    padding: 14px 28px;
+
+    font-size: 22px;
+
+    font-weight: bold;
+
+    border-radius: 14px;
+
+    border:
+    2px solid #00ffee;
+
+    background: rgba(0,0,0,0.7);
+
+    color: #00ffee;
+
+    cursor: pointer;
+
+    box-shadow:
+    0 0 12px #00ffee;
+}
