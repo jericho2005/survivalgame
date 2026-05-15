@@ -1234,20 +1234,21 @@
 
         // Obstacles as Treasure Chests
         obstacles.forEach((o) => {
+            const chestSize = o.size * 1.8;
 
             drawShadow(
                 o.x,
-                o.y + o.size * 0.4,
-                o.size * 0.7,
+                o.y + chestSize * 0.4,
+                chestSize * 0.4,
                 0.3
             );
 
             ctx.drawImage(
                 chestImage,
-                o.x - o.size / 2,
-                o.y - o.size / 2,
-                o.size,
-                o.size
+                o.x - chestSize / 2,
+                o.y - chestSize / 2,
+                chestSize,
+                chestSize
             );
 
             // Chest HP text
