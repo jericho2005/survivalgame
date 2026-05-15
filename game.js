@@ -39,8 +39,7 @@
     // AUDIO
     // =========================
     const pickupSound =
-    new Audio("assets/audio/yuh.mp3");
-
+    new Audio("assets/audio/bubble.wav");
     pickupSound.volume = 1;
 
     const screamSound = new Audio("assets/audio/scream.wav");
