@@ -187,6 +187,10 @@
     // =========================
     // IMAGES
     // =========================
+    const chestImage = new Image();
+
+        chestImage.src =
+            "assets/images/CHEST.jpg";
 
     const enemyImages = [];
 
