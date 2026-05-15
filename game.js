@@ -190,7 +190,7 @@
     const chestImage = new Image();
 
         chestImage.src =
-            "assets/images/CHEST.jpg";
+            "assets/images/CHEST.png";
 
     const enemyImages = [];
 
