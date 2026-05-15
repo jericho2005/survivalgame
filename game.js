@@ -40,7 +40,7 @@
     // =========================
     const pickupSound =
     new Audio("assets/audio/bubble.wav");
-    pickupSound.volume = 1;
+    pickupSound.volume = 0.4;
 
     const screamSound = new Audio("assets/audio/scream.wav");
     screamSound.volume = 1;
@@ -953,7 +953,7 @@
                 if (soundEnabled) {
 
                     pickupSound.currentTime = 0;
-                    pickupSound.volume = 1;
+                    pickupSound.volume = 0.4;
                     pickupSound.play();
                 }
 
