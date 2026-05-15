@@ -33,12 +33,6 @@
     let lightningEffects = [];
     let soundEnabled = true;
     let joystickEnabled = false;
-    if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
-
-        joystickEnabled = true;
-
-        joystickToggle.innerText = "ON";
-    }
     
 
     // =========================
