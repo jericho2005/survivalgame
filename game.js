@@ -18,6 +18,12 @@
 
     const joystickToggle =
         document.getElementById("joystickToggle");
+    
+    const joystick =
+    document.getElementById("joystick");
+
+    const stick =
+        document.getElementById("stick");
 
     let animationId;
     let gameRunning = false;
@@ -808,9 +814,9 @@
 
                         // BOT DEAD
                         if (bot.blades <= 0) {
-                            screamSound.currentTime = 0;
                             if (soundEnabled) {
-                                s.play();
+                                screamSound.currentTime = 0;
+                                screamSound.play();
                             }
 
                             createLightning(
@@ -897,10 +903,12 @@
 
                 if (dist < obs.size / 2 + 12) {
 
-                    hitSound.currentTime = 0;
-                    hitSound.volume = 0.2;
                     if (soundEnabled) {
-                        s.play();
+
+                        hitSound.currentTime = 0;
+                        hitSound.volume = 0.2;
+
+                        hitSound.play();
                     }
 
                     obs.value--;
@@ -1573,29 +1581,59 @@ upload.addEventListener(
     }
 );
 
-let touchX = null;
-let touchY = null;
+let joystickTouchId = null;
 
-window.addEventListener("touchstart", (e) => {
+joystick.addEventListener("touchstart", (e) => {
 
-    touchX = e.touches[0].clientX;
-    touchY = e.touches[0].clientY;
-});
+    joystickTouchId = e.changedTouches[0].identifier;
+
+}, { passive: false });
 
 window.addEventListener("touchmove", (e) => {
+
     if (!joystickEnabled) return;
 
-    const x = e.touches[0].clientX;
-    const y = e.touches[0].clientY;
+    for (let touch of e.touches) {
 
-    const dx = x - touchX;
-    const dy = y - touchY;
+        if (touch.identifier === joystickTouchId) {
 
-    player.x += dx * 0.2;
-    player.y += dy * 0.2;
+            const rect =
+                joystick.getBoundingClientRect();
 
-    touchX = x;
-    touchY = y;
+            const centerX =
+                rect.left + rect.width / 2;
+
+            const centerY =
+                rect.top + rect.height / 2;
+
+            let dx = touch.clientX - centerX;
+            let dy = touch.clientY - centerY;
+
+            const distance =
+                Math.hypot(dx, dy);
+
+            const maxDistance = 40;
+
+            if (distance > maxDistance) {
+
+                dx = dx / distance * maxDistance;
+                dy = dy / distance * maxDistance;
+            }
+
+            stick.style.transform =
+                `translate(${dx}px, ${dy}px)`;
+
+            player.x += dx * 0.15;
+            player.y += dy * 0.15;
+        }
+    }
+
+}, { passive: false });
+
+window.addEventListener("touchend", () => {
+
+    stick.style.transform =
+        "translate(0px, 0px)";
 });
 
 document.addEventListener("touchmove", (e) => {
@@ -1620,12 +1658,22 @@ soundToggle.addEventListener("click", () => {
         soundEnabled ? "ON" : "OFF";
 });
 
+function updateJoystickUI() {
+
+    joystick.style.display =
+        joystickEnabled ? "block" : "none";
+
+    joystickToggle.innerText =
+        joystickEnabled ? "ON" : "OFF";
+}
+
+updateJoystickUI();
+
 joystickToggle.addEventListener("click", () => {
 
     joystickEnabled = !joystickEnabled;
 
-    joystickToggle.innerText =
-        joystickEnabled ? "ON" : "OFF";
+    updateJoystickUI();
 });
 
 const confirmSettings =

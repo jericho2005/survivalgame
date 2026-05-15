@@ -394,3 +394,60 @@ canvas {
     box-shadow:
     0 0 12px #00ffee;
 }
+
+#joystick{
+    position: fixed;
+    bottom: 40px;
+    left: 40px;
+
+    width: 140px;
+    height: 140px;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,0.08);
+
+    border: 2px solid rgba(255,255,255,0.3);
+
+    backdrop-filter: blur(8px);
+
+    display: none;
+
+    z-index: 999;
+}
+
+#stick{
+    position: absolute;
+
+    width: 60px;
+    height: 60px;
+
+    border-radius: 50%;
+
+    background: #00ffe1;
+
+    left: 40px;
+    top: 40px;
+
+    box-shadow:
+        0 0 20px #00ffe1,
+        0 0 40px #00ffe1;
+}
+
+#settingsPanel{
+    color: white;
+}
+
+#settingsPanel h2{
+    color: #00ffe1;
+}
+
+.setting-item span{
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+#settingsPanel button{
+    color: white;
+}
