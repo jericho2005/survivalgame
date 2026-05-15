@@ -33,11 +33,18 @@
     let lightningEffects = [];
     let soundEnabled = true;
     let joystickEnabled = false;
+    let bossMusicPlaying = false;
     
 
     // =========================
     // AUDIO
     // =========================
+    const bossMusic =
+        new Audio("assets/audio/yuh.mp3");
+
+    bossMusic.loop = true;
+    bossMusic.volume = 0.5;
+
     const pickupSound =
     new Audio("assets/audio/bubble.wav");
     pickupSound.volume = 0.4;
@@ -325,6 +332,7 @@
     let bubbles = [];
     let obstacles = [];
     let bots = [];
+    let bosses = [];
 
     // =========================
     // HELPERS
@@ -476,6 +484,27 @@
     }
 
     function spawnBot() {
+        function spawnBoss() {
+
+            bosses.push({
+
+                x: player.x + (Math.random() - 0.5) * 6000,
+                y: player.y + (Math.random() - 0.5) * 6000,
+
+                radius: 120,
+
+                hp: 500,
+                maxHp: 500,
+
+                blades: 25,
+
+                angle: 0,
+
+                speed: 1.2,
+
+                color: "#ff0000"
+            });
+        }
 
         bots.push({
             x: player.x + (Math.random() - 0.5) * 4000,
@@ -521,6 +550,7 @@
         for (let i = 0; i < 40; i++) spawnBubble();
         for (let i = 0; i < 25; i++) spawnObstacle();
         for (let i = 0; i < 5; i++) spawnBot();
+        for (let i = 0; i < 3; i++) spawnBoss();
     }
 
     // =========================
@@ -622,6 +652,13 @@
 
     function update() {
 
+        bosses = bosses.filter(boss =>
+            Math.hypot(
+                boss.x - player.x,
+                boss.y - player.y
+            ) < 7000
+        );
+
         if (!gameRunning) return;
 
         // Movement
@@ -644,6 +681,73 @@
 
             bot.angle += 0.03;
         });
+
+        // =========================
+        // BOSS MOVEMENT
+        // =========================
+
+        bosses.forEach((boss) => {
+
+            const dx = player.x - boss.x;
+            const dy = player.y - boss.y;
+
+            const dist = Math.hypot(dx, dy);
+
+            if (dist > 1) {
+
+                boss.x += (dx / dist) * boss.speed;
+                boss.y += (dy / dist) * boss.speed;
+            }
+
+            boss.angle += 0.02;
+        });
+
+        // =========================
+        // BOSS MUSIC DETECTION
+        // =========================
+
+        let nearBoss = false;
+
+        bosses.forEach((boss) => {
+
+            const dist =
+                Math.hypot(
+                    player.x - boss.x,
+                    player.y - boss.y
+                );
+
+            if (dist < 900) {
+
+                nearBoss = true;
+            }
+        });
+
+        // Start music
+        if (
+            nearBoss &&
+            !bossMusicPlaying &&
+            soundEnabled
+        ) {
+
+            bossMusic.currentTime = 0;
+
+            bossMusic.play();
+
+            bossMusicPlaying = true;
+        }
+
+        // Stop music
+        if (
+            !nearBoss &&
+            bossMusicPlaying
+        ) {
+
+            bossMusic.pause();
+
+            bossMusic.currentTime = 0;
+
+            bossMusicPlaying = false;
+        }
 
         // =========================
         // PLAYER BLADES VS BOT BLADES
@@ -850,6 +954,101 @@
                 if (botDead) break;
             }
         }
+
+        // =========================
+        // PLAYER VS BOSSES
+        // =========================
+
+        bosses.forEach((boss, bossIndex) => {
+
+            let allBlades = [];
+
+            for (let level = 1; level <= 9; level++) {
+
+                const amount =
+                    player.inventory[level] || 0;
+
+                const sword =
+                    swordLevels[level - 1];
+
+                for (let i = 0; i < amount; i++) {
+
+                    allBlades.push(sword);
+                }
+            }
+
+            const orbitRadius =
+                120 + allBlades.length * 2;
+
+            for (let i = 0; i < allBlades.length; i++) {
+
+                const sword = allBlades[i];
+
+                const bladeAngle =
+                    player.angle +
+                    (i * Math.PI * 2 / allBlades.length);
+
+                const bx =
+                    player.x +
+                    Math.cos(bladeAngle) * orbitRadius;
+
+                const by =
+                    player.y +
+                    Math.sin(bladeAngle) * orbitRadius;
+
+                const dist =
+                    Math.hypot(
+                        bx - boss.x,
+                        by - boss.y
+                    );
+
+                if (dist < boss.radius) {
+
+                    boss.hp -= sword.damage;
+
+                    createHitSparks(
+                        bx,
+                        by,
+                        sword.color
+                    );
+
+                    createLightning(
+                        bx,
+                        by,
+                        boss.x,
+                        boss.y,
+                        sword.color
+                    );
+
+                    if (soundEnabled) {
+
+                        hitSound.currentTime = 0;
+                        hitSound.play();
+                    }
+                }
+            }
+
+            // Boss defeated
+            if (boss.hp <= 0) {
+
+                createLightning(
+                    player.x,
+                    player.y,
+                    boss.x,
+                    boss.y,
+                    "#ff0000"
+                );
+
+                // Reward player
+                player.inventory[1] += 50;
+
+                mergeBlades();
+
+                bosses.splice(bossIndex, 1);
+
+                spawnBoss();
+            }
+        });
 
         // =========================
         // PLAYER VS OBSTACLES
@@ -1337,6 +1536,116 @@
             }
         });
 
+        // =========================
+        // DRAW BOSSES
+        // =========================
+
+        bosses.forEach((boss) => {
+
+            drawShadow(
+                boss.x,
+                boss.y + 60,
+                90,
+                0.45
+            );
+
+            // Boss body
+            ctx.beginPath();
+
+            ctx.arc(
+                boss.x,
+                boss.y,
+                boss.radius,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.fillStyle = "#550000";
+
+            ctx.fill();
+
+            ctx.lineWidth = 8;
+
+            ctx.strokeStyle = "#ff0000";
+
+            ctx.stroke();
+
+            // Eyes
+            ctx.beginPath();
+
+            ctx.arc(
+                boss.x - 35,
+                boss.y - 20,
+                10,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.arc(
+                boss.x + 35,
+                boss.y - 20,
+                10,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.fillStyle = "red";
+
+            ctx.fill();
+
+            // HP BAR
+            const barWidth = 220;
+            const hpPercent =
+                boss.hp / boss.maxHp;
+
+            ctx.fillStyle = "black";
+
+            ctx.fillRect(
+                boss.x - barWidth / 2,
+                boss.y - 160,
+                barWidth,
+                20
+            );
+
+            ctx.fillStyle = "red";
+
+            ctx.fillRect(
+                boss.x - barWidth / 2,
+                boss.y - 160,
+                barWidth * hpPercent,
+                20
+            );
+
+            // Boss blades
+            const bossSword =
+                swordLevels[8];
+
+            const orbitRadius =
+                170;
+
+            for (let i = 0; i < boss.blades; i++) {
+
+                const angle =
+                    boss.angle +
+                    (i * Math.PI * 2 / boss.blades);
+
+                const bx =
+                    boss.x +
+                    Math.cos(angle) * orbitRadius;
+
+                const by =
+                    boss.y +
+                    Math.sin(angle) * orbitRadius;
+
+                drawCrescent(
+                    bx,
+                    by,
+                    angle + Math.PI / 2,
+                    bossSword
+                );
+            }
+        });
+
         // Lightning
         lightningEffects.forEach((l) => {
 
@@ -1452,6 +1761,9 @@
     // =========================
 
     function gameOver() {
+        bossMusic.pause();
+        bossMusic.currentTime = 0;
+        bossMusicPlaying = false;
 
         gameRunning = false;
 
@@ -1676,6 +1988,15 @@ cancelSettings.addEventListener("click", () => {
 soundToggle.addEventListener("click", () => {
 
     soundEnabled = !soundEnabled;
+
+    if (!soundEnabled) {
+
+        bossMusic.pause();
+
+    } else if (bossMusicPlaying) {
+
+        bossMusic.play();
+    }
 
     soundToggle.innerText =
         soundEnabled ? "ON" : "OFF";
