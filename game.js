@@ -954,7 +954,7 @@
 
                     const s = pickupSound.cloneNode();
 
-                    s.volume = 0.4;
+                    s.volume = 1;
 
                     s.play();
                 }
