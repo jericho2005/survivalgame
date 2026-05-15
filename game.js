@@ -372,7 +372,7 @@
             hitSparks.splice(0, 15);
         }
 
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i < 15; i++) {
 
             hitSparks.push({
                 x,
@@ -487,9 +487,9 @@
         obstacles = [];
         bots = [];
 
-        for (let i = 0; i < 25; i++) spawnBubble();
-        for (let i = 0; i < 15; i++) spawnObstacle();
-        for (let i = 0; i < 3; i++) spawnBot();
+        for (let i = 0; i < 40; i++) spawnBubble();
+        for (let i = 0; i < 25; i++) spawnObstacle();
+        for (let i = 0; i < 5; i++) spawnBot();
     }
 
     // =========================
@@ -1334,8 +1334,7 @@
         // =========================
 
         let allBlades = [];
-        const MAX_BLADES_RENDER =
-            window.innerWidth < 768 ? 20 : 40;
+        const MAX_BLADES_RENDER = 40;
 
         // Gather all blades from inventory
         for (let level = 1; level <= 9; level++) {
@@ -1471,22 +1470,9 @@
 
         document.body.appendChild(btn);
 
-
         btn.onclick = () => {
 
             btn.remove();
-            document.body.addEventListener(
-                "touchstart",
-                () => {
-
-                    screamSound.play().then(() => {
-                        screamSound.pause();
-                        screamSound.currentTime = 0;
-                    });
-
-                },
-                { once: true }
-            );
 
             startGame();
         };
@@ -1517,24 +1503,8 @@
 
     function resizeCanvas() {
 
-        const dpr =
-            window.devicePixelRatio || 1;
-
-        canvas.width =
-            window.innerWidth * dpr;
-
-        canvas.height =
-            window.innerHeight * dpr;
-
-        canvas.style.width =
-            window.innerWidth + "px";
-
-        canvas.style.height =
-            window.innerHeight + "px";
-
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-
-        ctx.scale(dpr, dpr);
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
     }
 
     window.addEventListener("resize", resizeCanvas);
@@ -1579,13 +1549,13 @@ upload.addEventListener(
 let touchX = null;
 let touchY = null;
 
-canvas.addEventListener("touchstart", (e) => {
+window.addEventListener("touchstart", (e) => {
 
     touchX = e.touches[0].clientX;
     touchY = e.touches[0].clientY;
 });
 
-canvas.addEventListener("touchmove", (e) => {
+window.addEventListener("touchmove", (e) => {
 
     const x = e.touches[0].clientX;
     const y = e.touches[0].clientY;
@@ -1593,8 +1563,9 @@ canvas.addEventListener("touchmove", (e) => {
     const dx = x - touchX;
     const dy = y - touchY;
 
-    player.x += dx * 0.12;
-    player.y += dy * 0.12;
+    player.x += dx * 0.2;
+    player.y += dy * 0.2;
+
     touchX = x;
     touchY = y;
 });
