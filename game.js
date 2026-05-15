@@ -952,11 +952,9 @@
 
                 if (soundEnabled) {
 
-                    const s = pickupSound.cloneNode();
-
-                    s.volume = 1;
-
-                    s.play();
+                    pickupSound.currentTime = 0;
+                    pickupSound.volume = 1;
+                    pickupSound.play();
                 }
 
                 player.inventory[1] += bubble.value;
@@ -1536,6 +1534,13 @@
         menu.style.display = "none";
 
         gameRunning = true;
+
+        pickupSound.load();
+
+        pickupSound.play().then(() => {
+            pickupSound.pause();
+            pickupSound.currentTime = 0;
+        }).catch(() => {});
 
         if (joystickEnabled) {
             joystick.style.display = "block";
