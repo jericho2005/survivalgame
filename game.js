@@ -40,6 +40,13 @@
     // =========================
     const pickupSound =
     new Audio("assets/audio/bubble.mp3");
+    pickupSound.addEventListener("canplaythrough", () => {
+        console.log("Bubble sound loaded");
+    });
+
+    pickupSound.addEventListener("error", (e) => {
+        console.log("Bubble sound failed", e);
+    });
 
     pickupSound.volume = 0.4;
     const screamSound = new Audio("assets/audio/scream.wav");
